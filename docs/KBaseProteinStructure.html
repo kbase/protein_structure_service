@@ -1,0 +1,170 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:ubuntu@dolson-v25-tmp.(none)" />
+</head>
+
+<body style="background-color: white">
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#lookup_pdb_by_md5">lookup_pdb_by_md5</a></li>
+    </ul>
+  </li>
+  <li><a href="#TYPES">TYPES</a>
+    <ul>
+      <li><a href="#md5_id">md5_id</a></li>
+      <li><a href="#md5_ids">md5_ids</a></li>
+      <li><a href="#pdb_id">pdb_id</a></li>
+      <li><a href="#pdb_ids">pdb_ids</a></li>
+      <li><a href="#md5_to_pdb_ids">md5_to_pdb_ids</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Service for all ......R</p>
+
+<p>Sean, please refer... https://trac.kbase.us/projects/kbase/wiki/StandardDocuments</p>
+
+<h2 id="lookup_pdb_by_md5">lookup_pdb_by_md5</h2>
+
+<pre><code>  $results = $obj-&gt;lookup_pdb_by_md5($input_ids)</code></pre>
+
+<dl>
+
+<dt id="Parameter-and-return-types">Parameter and return types</dt>
+<dd>
+
+
+
+<pre>
+$input_ids is a md5_ids
+$results is a md5_to_pdb_ids
+md5_ids is a reference to a list where each element is a md5_id
+md5_id is a string
+md5_to_pdb_ids is a reference to a hash where the key is a md5_id and the value is a pdb_ids
+pdb_ids is a reference to a list where each element is a pdb_id
+pdb_id is a string</pre>
+
+</dd>
+<dt id="Description">Description</dt>
+<dd>
+
+<p>core function used by many others. Given a list of KBase SampleIds returns mapping of SampleId to expressionSampleDataStructure (essentially the core Expression Sample Object) : {sample_id -&gt; expressionSampleDataStructure}</p>
+
+</dd>
+</dl>
+
+<h1 id="TYPES">TYPES</h1>
+
+<h2 id="md5_id">md5_id</h2>
+
+<dl>
+
+<dt id="Description1">Description</dt>
+<dd>
+
+<p>KBase Protein MD5 id</p>
+
+</dd>
+<dt id="Definition">Definition</dt>
+<dd>
+
+
+
+<pre>
+a string
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="md5_ids">md5_ids</h2>
+
+<dl>
+
+<dt id="Definition1">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a list where each element is a md5_id
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="pdb_id">pdb_id</h2>
+
+<dl>
+
+<dt id="Description2">Description</dt>
+<dd>
+
+<p>PDB id</p>
+
+</dd>
+<dt id="Definition2">Definition</dt>
+<dd>
+
+
+
+<pre>
+a string
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="pdb_ids">pdb_ids</h2>
+
+<dl>
+
+<dt id="Definition3">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a list where each element is a pdb_id
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="md5_to_pdb_ids">md5_to_pdb_ids</h2>
+
+<dl>
+
+<dt id="Definition4">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a hash where the key is a md5_id and the value is a pdb_ids
+</pre>
+
+</dd>
+</dl>
+
+
+</body>
+
+</html>
+
+

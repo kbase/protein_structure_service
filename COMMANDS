@@ -1,0 +1,2 @@
+#group-name	protein_structure	ProteinStructure
+#command-set	scripts/(.*).pl	protein_structure

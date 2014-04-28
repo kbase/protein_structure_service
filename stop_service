@@ -1,0 +1,10 @@
+#!/bin/sh
+echo trying to stop KBaseProteinStructure service.
+pid_file=/kb/deployment/services/KBaseProteinStructure/service.pid
+if [ ! -f $pid_file ] ; then 
+	echo "No pid file: $pid_file found for service KBaseProteinStructure."
+	exit 1
+fi
+pid=$(cat $pid_file)
+kill $pid
+
