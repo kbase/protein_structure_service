@@ -41,6 +41,32 @@ sub  get_protein_sequences
     return( $res );
    }
 
+# do we need to put these files into deploy.cfg?
+
+sub  load_md5_pdb_table
+   {
+    my $self = shift;
+    my $md5pdbfile = "/home/ubuntu/Auxfiles/pdb.md5.tab";
+
+    open( MDP, $md5pdbfile ) || die "Can't open $md5pdbfile: $!\n";
+    $self->{'md5pdbtab'} = {};
+    my $r = $self->{'md5pdbtab'};
+    while ( $_ = <MDP> )
+       {
+        chomp;
+        s/^\s+//;
+        my ($md5,$pdb_id,$chains) = split( /\s+/ );
+        $self->{'md5pdbtab'}->{$md5} = [] unless( defined( $self->{'md5pdbtab'}->{$md5} ) );
+        push( @{$self->{'md5pdbtab'}->{$md5}}, [ $pdb_id, $chains ] );
+       }
+    close( MDP );
+    print STDERR "LOADED MD5 PDB TABLE  two\n";
+    #foreach my $k ( keys( %{$self->{'md5pdbtab'}} ) )
+    #   {
+    #    print "$k: ", join( ", ", map( join( " ", @{$_} ), @{$self->{'md5pdbtab'}->{$k}} ) ), "\n";
+    #   }
+   }
+
 #END_HEADER
 
 sub new
@@ -53,7 +79,10 @@ sub new
 
     # establish initial connection to central store.
     # TODO:  best way to handle error here.
+
     ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();    
+
+    $self->load_md5_pdb_table();
 
     #END_CONSTRUCTOR
 
@@ -132,11 +161,16 @@ sub lookup_pdb_by_md5
     my($results);
     #BEGIN lookup_pdb_by_md5
 
+    # should only do this if no direct pdb match?
     my $protseqs = $self->get_protein_sequences( @{$input_ids} );
 
     my $results = {};
     foreach my $md5 ( @{$input_ids} )
-       { $results->{$md5} = [ $protseqs->{$md5} ]; }
+       {
+        $results->{$md5} = join( ", ", map( join( " ", @{$_} ), @{$self->{'md5pdbtab'}->{$md5}} ) );
+
+        #$results->{$md5} = [ $protseqs->{$md5} ]; 
+       }
         
     #  $results =  { 
     #               "input_m5s" => [ @{$input_ids} ]
