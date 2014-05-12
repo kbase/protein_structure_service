@@ -23,6 +23,24 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
 
+sub  get_protein_sequences
+   {
+    my $self = shift;
+    my @md5s = @_;
+
+    my $h = $self->{'cdmi'}->get_entity_ProteinSequence( [ @md5s ], ['sequence']);
+
+    die "no h\n" unless( $h );
+
+    # make a result hash where md5's are keys, protein seq is
+    # the value
+
+    my $res = {};
+    map { $res->{$h->{$_}->{'id'}} = $h->{$_}->{'sequence'} } keys( %{$h} );
+
+    return( $res );
+   }
+
 #END_HEADER
 
 sub new
@@ -33,10 +51,9 @@ sub new
     bless $self, $class;
     #BEGIN_CONSTRUCTOR
 
-    ${$self}{'thing'} = "zuuto!";
     # establish initial connection to central store.
     # TODO:  best way to handle error here.
-    ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();
+    ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();    
 
     #END_CONSTRUCTOR
 
@@ -114,11 +131,17 @@ sub lookup_pdb_by_md5
     my $ctx = $Bio::KBase::KBaseProteinStructure::Service::CallContext;
     my($results);
     #BEGIN lookup_pdb_by_md5
-    my $xxx = ${$self}{"thing"};
-      $results =  { #"test" => ["result"]
-     		    "test" => [ $xxx ],
-                    "yousaid" => [ @{$input_ids} ]
-                  };
+
+    my $protseqs = $self->get_protein_sequences( @{$input_ids} );
+
+    my $results = {};
+    foreach my $md5 ( @{$input_ids} )
+       { $results->{$md5} = [ $protseqs->{$md5} ]; }
+        
+    #  $results =  { 
+    #               "input_m5s" => [ @{$input_ids} ]
+    # 		    "test" => [ @prots ],
+    #              };
     #END lookup_pdb_by_md5
     my @_bad_returns;
     (ref($results) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"results\" (value was \"$results\")");
