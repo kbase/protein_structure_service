@@ -36,7 +36,7 @@ sub new
     ${$self}{'thing'} = "zuuto!";
     # establish initial connection to central store.
     # TODO:  best way to handle error here.
-    ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();
+    #${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();
 
     #END_CONSTRUCTOR
 

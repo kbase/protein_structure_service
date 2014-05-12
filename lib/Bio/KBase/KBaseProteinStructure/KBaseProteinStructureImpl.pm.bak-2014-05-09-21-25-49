@@ -1,6 +1,8 @@
 package Bio::KBase::KBaseProteinStructure::KBaseProteinStructureImpl;
+
 use strict;
 use Bio::KBase::Exceptions;
+
 # Use Semantic Versioning (2.0.0-rc.1)
 # http://semver.org 
 our $VERSION = "0.1.0";
@@ -19,10 +21,6 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 =cut
 
 #BEGIN_HEADER
-
-use Bio::KBase::CDMI::CDMIClient;
-use Bio::KBase::Utilities::ScriptThing;
-
 #END_HEADER
 
 sub new
@@ -36,7 +34,7 @@ sub new
     ${$self}{'thing'} = "zuuto!";
     # establish initial connection to central store.
     # TODO:  best way to handle error here.
-    ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();
+    # ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();
 
     #END_CONSTRUCTOR
 
@@ -116,8 +114,7 @@ sub lookup_pdb_by_md5
     #BEGIN lookup_pdb_by_md5
     my $xxx = ${$self}{"thing"};
       $results =  { #"test" => ["result"]
-     		    "test" => [ $xxx ],
-                    "yousaid" => [ @{$input_ids} ]
+     		    "test" => [ $xxx ]
                   };
     #END lookup_pdb_by_md5
     my @_bad_returns;

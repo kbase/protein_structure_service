@@ -123,15 +123,13 @@ if($version)
 die $usage unless @ARGV == 0;
 
 my $psc = Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient->new($url);
-print "hello. have psc $psc\n";
 #my @dl = split/,/, $domainList;
 #my @el = split/,/, $ecList;
 my @input = <STDIN>;
 my $istr = join(" ", @input);
 $istr =~ s/[,]/ /g;
 @input = split /\s+/, $istr;
-print "going for lookup\n";
+
 my $results = $psc->lookup_pdb_by_md5( \@input);
-print "back from lookup";
 print Dumper($results);
 

@@ -19,10 +19,6 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 =cut
 
 #BEGIN_HEADER
-
-use Bio::KBase::CDMI::CDMIClient;
-use Bio::KBase::Utilities::ScriptThing;
-
 #END_HEADER
 
 sub new

@@ -19,10 +19,6 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 =cut
 
 #BEGIN_HEADER
-
-use Bio::KBase::CDMI::CDMIClient;
-use Bio::KBase::Utilities::ScriptThing;
-
 #END_HEADER
 
 sub new
@@ -32,12 +28,6 @@ sub new
     };
     bless $self, $class;
     #BEGIN_CONSTRUCTOR
-
-    ${$self}{'thing'} = "zuuto!";
-    # establish initial connection to central store.
-    # TODO:  best way to handle error here.
-    ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();
-
     #END_CONSTRUCTOR
 
     if ($self->can('_init_instance'))
@@ -114,11 +104,7 @@ sub lookup_pdb_by_md5
     my $ctx = $Bio::KBase::KBaseProteinStructure::Service::CallContext;
     my($results);
     #BEGIN lookup_pdb_by_md5
-    my $xxx = ${$self}{"thing"};
-      $results =  { #"test" => ["result"]
-     		    "test" => [ $xxx ],
-                    "yousaid" => [ @{$input_ids} ]
-                  };
+      $results =  {"test" => ["result"]};
     #END lookup_pdb_by_md5
     my @_bad_returns;
     (ref($results) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"results\" (value was \"$results\")");
