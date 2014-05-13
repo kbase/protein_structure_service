@@ -20,11 +20,17 @@
   </li>
   <li><a href="#TYPES">TYPES</a>
     <ul>
-      <li><a href="#md5_id">md5_id</a></li>
-      <li><a href="#md5_ids">md5_ids</a></li>
-      <li><a href="#pdb_id">pdb_id</a></li>
-      <li><a href="#pdb_ids">pdb_ids</a></li>
-      <li><a href="#md5_to_pdb_ids">md5_to_pdb_ids</a></li>
+      <li><a href="#md5_id_t">md5_id_t</a></li>
+      <li><a href="#md5_ids_t">md5_ids_t</a></li>
+      <li><a href="#pdb_id_t">pdb_id_t</a></li>
+      <li><a href="#chains_t">chains_t</a></li>
+      <li><a href="#exact_t">exact_t</a></li>
+      <li><a href="#resolution_t">resolution_t</a></li>
+      <li><a href="#percent_id_t">percent_id_t</a></li>
+      <li><a href="#align_length_t">align_length_t</a></li>
+      <li><a href="#PDBMatch">PDBMatch</a></li>
+      <li><a href="#PDBMatches">PDBMatches</a></li>
+      <li><a href="#md5_to_pdb_matches">md5_to_pdb_matches</a></li>
     </ul>
   </li>
 </ul>
@@ -51,33 +57,45 @@
 
 
 <pre>
-$input_ids is a md5_ids
-$results is a md5_to_pdb_ids
-md5_ids is a reference to a list where each element is a md5_id
-md5_id is a string
-md5_to_pdb_ids is a reference to a hash where the key is a md5_id and the value is a pdb_ids
-pdb_ids is a reference to a list where each element is a pdb_id
-pdb_id is a string</pre>
+$input_ids is a md5_ids_t
+$results is a md5_to_pdb_matches
+md5_ids_t is a reference to a list where each element is a md5_id_t
+md5_id_t is a string
+md5_to_pdb_matches is a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int</pre>
 
 </dd>
 <dt id="Description">Description</dt>
 <dd>
 
-<p>core function used by many others. Given a list of KBase SampleIds returns mapping of SampleId to expressionSampleDataStructure (essentially the core Expression Sample Object) : {sample_id -&gt; expressionSampleDataStructure}</p>
+<p>of each to a list of PDBMatch records</p>
 
 </dd>
 </dl>
 
 <h1 id="TYPES">TYPES</h1>
 
-<h2 id="md5_id">md5_id</h2>
+<h2 id="md5_id_t">md5_id_t</h2>
 
 <dl>
 
 <dt id="Description1">Description</dt>
 <dd>
 
-<p>KBase Protein MD5 id</p>
+<p>Inputs to service:</p>
 
 </dd>
 <dt id="Definition">Definition</dt>
@@ -92,30 +110,36 @@ a string
 </dd>
 </dl>
 
-<h2 id="md5_ids">md5_ids</h2>
-
-<dl>
-
-<dt id="Definition1">Definition</dt>
-<dd>
-
-
-
-<pre>
-a reference to a list where each element is a md5_id
-</pre>
-
-</dd>
-</dl>
-
-<h2 id="pdb_id">pdb_id</h2>
+<h2 id="md5_ids_t">md5_ids_t</h2>
 
 <dl>
 
 <dt id="Description2">Description</dt>
 <dd>
 
-<p>PDB id</p>
+<p>KBase Protein MD5 id</p>
+
+</dd>
+<dt id="Definition1">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a list where each element is a md5_id_t
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="pdb_id_t">pdb_id_t</h2>
+
+<dl>
+
+<dt id="Description3">Description</dt>
+<dd>
+
+<p>Outputs from service</p>
 
 </dd>
 <dt id="Definition2">Definition</dt>
@@ -130,33 +154,176 @@ a string
 </dd>
 </dl>
 
-<h2 id="pdb_ids">pdb_ids</h2>
+<h2 id="chains_t">chains_t</h2>
 
 <dl>
 
+<dt id="Description4">Description</dt>
+<dd>
+
+<p>PDB id</p>
+
+</dd>
 <dt id="Definition3">Definition</dt>
 <dd>
 
 
 
 <pre>
-a reference to a list where each element is a pdb_id
+a string
 </pre>
 
 </dd>
 </dl>
 
-<h2 id="md5_to_pdb_ids">md5_to_pdb_ids</h2>
+<h2 id="exact_t">exact_t</h2>
 
 <dl>
 
+<dt id="Description5">Description</dt>
+<dd>
+
+<p>subchains of a match, i.e. &quot;(A,C,D)&quot;</p>
+
+</dd>
 <dt id="Definition4">Definition</dt>
 <dd>
 
 
 
 <pre>
-a reference to a hash where the key is a md5_id and the value is a pdb_ids
+an int
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="resolution_t">resolution_t</h2>
+
+<dl>
+
+<dt id="Description6">Description</dt>
+<dd>
+
+<p>1 (true) if exact match to pdb sequence</p>
+
+</dd>
+<dt id="Definition5">Definition</dt>
+<dd>
+
+
+
+<pre>
+a float
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="percent_id_t">percent_id_t</h2>
+
+<dl>
+
+<dt id="Description7">Description</dt>
+<dd>
+
+<p>structural resolution (angstroms)</p>
+
+</dd>
+<dt id="Definition6">Definition</dt>
+<dd>
+
+
+
+<pre>
+a float
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="align_length_t">align_length_t</h2>
+
+<dl>
+
+<dt id="Description8">Description</dt>
+<dd>
+
+<p>% identity from BLASTP matches</p>
+
+</dd>
+<dt id="Definition7">Definition</dt>
+<dd>
+
+
+
+<pre>
+an int
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="PDBMatch">PDBMatch</h2>
+
+<dl>
+
+<dt id="Description9">Description</dt>
+<dd>
+
+<p>alignment length</p>
+
+</dd>
+<dt id="Definition8">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a hash where the following keys are defined:
+pdb_id has a value which is a pdb_id_t
+chains has a value which is a chains_t
+resolution has a value which is a resolution_t
+exact has a value which is an exact_t
+percent_id has a value which is a percent_id_t
+align_length has a value which is an align_length_t</pre>
+
+</dd>
+</dl>
+
+<h2 id="PDBMatches">PDBMatches</h2>
+
+<dl>
+
+<dt id="Definition9">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a list where each element is a PDBMatch
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="md5_to_pdb_matches">md5_to_pdb_matches</h2>
+
+<dl>
+
+<dt id="Description10">Description</dt>
+<dd>
+
+<p>list of the same</p>
+
+</dd>
+<dt id="Definition10">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
 </pre>
 
 </dd>

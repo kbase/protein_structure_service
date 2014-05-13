@@ -5,28 +5,46 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 */
 module KBaseProteinStructure { 
 
-    /* 
-        KBase Protein MD5 id 
-    */
-    typedef string md5_id;
+
+    /* Inputs to service: */
+
+    typedef string md5_id_t;             /* KBase Protein MD5 id  */
+
+    typedef list<md5_id_t> md5_ids_t;    /* list of the same */
 
 
+    /* Outputs from service */
+	
+    typedef string  pdb_id_t;            /* PDB id */
 
-    typedef list<md5_id> md5_ids;
+    typedef string  chains_t;            /* subchains of a match, i.e. "(A,C,D)" */
 
-    /*
-	PDB id
-    */
-    typedef string pdb_id;
+    typedef int     exact_t;             /* 1 (true) if exact match to pdb sequence */
+    
+    typedef float   resolution_t;        /* structural resolution (angstroms) */
 
-    typedef list<pdb_id> pdb_ids;
+    typedef float   percent_id_t;        /* % identity from BLASTP matches */
+ 
+    typedef int     align_length_t;      /* alignment length  */
 
-    typedef mapping<md5_id,pdb_ids> md5_to_pdb_ids;
+    typedef structure {
+                       pdb_id_t        pdb_id;
+                       chains_t        chains;
+                       resolution_t    resolution;
+                       exact_t         exact;
+                       percent_id_t    percent_id;
+                       align_length_t  align_length;
+                      } PDBMatch;
+
+    typedef list<PDBMatch> PDBMatches;    /* list of the same */
+
+    typedef mapping<md5_id_t,PDBMatches> md5_to_pdb_matches;
     
 
     /*FUNCTIONS*/
     
-    /* core function used by many others.  Given a list of KBase SampleIds returns mapping of SampleId to expressionSampleDataStructure (essentially the core Expression Sample Object) : 
-    {sample_id -> expressionSampleDataStructure}*/
-    funcdef lookup_pdb_by_md5( md5_ids input_ids ) returns (md5_to_pdb_ids results);
+    /* primary function - accepts a list of protein MD5s.  returns a hash (mapping?)  */
+    /* of each to a list of PDBMatch records */
+
+    funcdef lookup_pdb_by_md5( md5_ids_t input_ids ) returns (md5_to_pdb_matches results);
 }; 

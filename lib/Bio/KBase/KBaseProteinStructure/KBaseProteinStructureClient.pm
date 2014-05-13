@@ -59,13 +59,25 @@ sub new
 =begin html
 
 <pre>
-$input_ids is a md5_ids
-$results is a md5_to_pdb_ids
-md5_ids is a reference to a list where each element is a md5_id
-md5_id is a string
-md5_to_pdb_ids is a reference to a hash where the key is a md5_id and the value is a pdb_ids
-pdb_ids is a reference to a list where each element is a pdb_id
-pdb_id is a string
+$input_ids is a md5_ids_t
+$results is a md5_to_pdb_matches
+md5_ids_t is a reference to a list where each element is a md5_id_t
+md5_id_t is a string
+md5_to_pdb_matches is a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
 
 </pre>
 
@@ -73,21 +85,32 @@ pdb_id is a string
 
 =begin text
 
-$input_ids is a md5_ids
-$results is a md5_to_pdb_ids
-md5_ids is a reference to a list where each element is a md5_id
-md5_id is a string
-md5_to_pdb_ids is a reference to a hash where the key is a md5_id and the value is a pdb_ids
-pdb_ids is a reference to a list where each element is a pdb_id
-pdb_id is a string
+$input_ids is a md5_ids_t
+$results is a md5_to_pdb_matches
+md5_ids_t is a reference to a list where each element is a md5_id_t
+md5_id_t is a string
+md5_to_pdb_matches is a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
 
 
 =end text
 
 =item Description
 
-core function used by many others.  Given a list of KBase SampleIds returns mapping of SampleId to expressionSampleDataStructure (essentially the core Expression Sample Object) : 
-{sample_id -> expressionSampleDataStructure}
+of each to a list of PDBMatch records
 
 =back
 
@@ -197,7 +220,38 @@ sub _validate_version {
 
 
 
-=head2 md5_id
+=head2 md5_id_t
+
+=over 4
+
+
+
+=item Description
+
+Inputs to service:
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 md5_ids_t
 
 =over 4
 
@@ -213,14 +267,14 @@ KBase Protein MD5 id
 =begin html
 
 <pre>
-a string
+a reference to a list where each element is a md5_id_t
 </pre>
 
 =end html
 
 =begin text
 
-a string
+a reference to a list where each element is a md5_id_t
 
 =end text
 
@@ -228,10 +282,15 @@ a string
 
 
 
-=head2 md5_ids
+=head2 pdb_id_t
 
 =over 4
 
+
+
+=item Description
+
+Outputs from service
 
 
 =item Definition
@@ -239,14 +298,14 @@ a string
 =begin html
 
 <pre>
-a reference to a list where each element is a md5_id
+a string
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a list where each element is a md5_id
+a string
 
 =end text
 
@@ -254,7 +313,7 @@ a reference to a list where each element is a md5_id
 
 
 
-=head2 pdb_id
+=head2 chains_t
 
 =over 4
 
@@ -285,10 +344,15 @@ a string
 
 
 
-=head2 pdb_ids
+=head2 exact_t
 
 =over 4
 
+
+
+=item Description
+
+subchains of a match, i.e. "(A,C,D)"
 
 
 =item Definition
@@ -296,14 +360,14 @@ a string
 =begin html
 
 <pre>
-a reference to a list where each element is a pdb_id
+an int
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a list where each element is a pdb_id
+an int
 
 =end text
 
@@ -311,7 +375,145 @@ a reference to a list where each element is a pdb_id
 
 
 
-=head2 md5_to_pdb_ids
+=head2 resolution_t
+
+=over 4
+
+
+
+=item Description
+
+1 (true) if exact match to pdb sequence
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a float
+</pre>
+
+=end html
+
+=begin text
+
+a float
+
+=end text
+
+=back
+
+
+
+=head2 percent_id_t
+
+=over 4
+
+
+
+=item Description
+
+structural resolution (angstroms)
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a float
+</pre>
+
+=end html
+
+=begin text
+
+a float
+
+=end text
+
+=back
+
+
+
+=head2 align_length_t
+
+=over 4
+
+
+
+=item Description
+
+% identity from BLASTP matches
+
+
+=item Definition
+
+=begin html
+
+<pre>
+an int
+</pre>
+
+=end html
+
+=begin text
+
+an int
+
+=end text
+
+=back
+
+
+
+=head2 PDBMatch
+
+=over 4
+
+
+
+=item Description
+
+alignment length
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+pdb_id has a value which is a pdb_id_t
+chains has a value which is a chains_t
+resolution has a value which is a resolution_t
+exact has a value which is an exact_t
+percent_id has a value which is a percent_id_t
+align_length has a value which is an align_length_t
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+pdb_id has a value which is a pdb_id_t
+chains has a value which is a chains_t
+resolution has a value which is a resolution_t
+exact has a value which is an exact_t
+percent_id has a value which is a percent_id_t
+align_length has a value which is an align_length_t
+
+
+=end text
+
+=back
+
+
+
+=head2 PDBMatches
 
 =over 4
 
@@ -322,14 +524,45 @@ a reference to a list where each element is a pdb_id
 =begin html
 
 <pre>
-a reference to a hash where the key is a md5_id and the value is a pdb_ids
+a reference to a list where each element is a PDBMatch
 </pre>
 
 =end html
 
 =begin text
 
-a reference to a hash where the key is a md5_id and the value is a pdb_ids
+a reference to a list where each element is a PDBMatch
+
+=end text
+
+=back
+
+
+
+=head2 md5_to_pdb_matches
+
+=over 4
+
+
+
+=item Description
+
+list of the same
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
 
 =end text
 
