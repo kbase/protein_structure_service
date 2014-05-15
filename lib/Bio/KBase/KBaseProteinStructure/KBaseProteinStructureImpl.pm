@@ -20,6 +20,22 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 
 #BEGIN_HEADER
 
+# TODO:
+#   1) do we put all aux file names into deploy.cfg?
+#      a) pdb md5 list
+#      b) pdb res data
+#      c) pdb blast db
+#   2) Error handling (and recovery?) for 
+#        a) all CMDI connections
+#        b) existence and readability of aux files
+#        c) existence and execution of blastp
+#        d) blast execution
+#   3) how to adjust or pass alternate percent id thresholds?
+#       same for match length?
+#   4) preparation of aux files?
+#   5) how to test?
+#   6) scheme for setting a cutoff evalue for blastp?
+#
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
 
@@ -41,7 +57,11 @@ sub  get_protein_sequences
     return( $res );
    }
 
-# do we need to put these files into deploy.cfg?
+# TODO:  do we need to put these files into deploy.cfg?
+
+# this creates a MD5-indexed hash table connecting the unique protein sequence MD5
+# to a list reference of pdb IDs coupled with chain ids (in cases where there are 
+# different chain sequences in a structure)
 
 sub  load_md5_pdb_table
    {
@@ -189,30 +209,64 @@ sub lookup_pdb_by_md5
     my $protseqs = $self->get_protein_sequences( @{$input_ids} );
 
     my $results = {};
-    foreach my $md5 ( @{$input_ids} )
+    foreach my $md5 ( @{$input_ids} )     # for each sequence
        {
-        $results->{$md5} = [] unless( defined( $results->{$md5} ) );
+        $results->{$md5} = [] unless( defined( $results->{$md5} ) ); # initialize results list
+        my $seqlength = length( $protseqs->{$md5} );                 # length for alignment cutoff
 
-        foreach my $r ( @{$self->{'md5pdbtab'}->{$md5}} )
-           {
-            push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
-                                         'chains'       => $$r[1],
-                                         'resolution'   => $$r[2],
-                                         'exact'        => 1,
-                                         'percent_id'   => 100.0,
-                                         'align_length' => -1    # length of seq
-                                       } );
+        if ( defined( $self->{'md5pdbtab'}->{$md5} ) )               # if we have exact PDB 
+           {                                                         # matches, then use those
+            foreach my $r ( @{$self->{'md5pdbtab'}->{$md5}} )
+               {
+                push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
+                                             'chains'       => $$r[1],
+                                             'resolution'   => $$r[2],
+                                             'exact'        => 1,
+                                             'percent_id'   => 100.0,
+                                             'align_length' => $seqlength
+                                           } );
+               }
            }
-        
-        #$results->{$md5} = join( ", ", map( join( " ", @{$_} ), @{$self->{'md5pdbtab'}->{$md5}} ) );
+        else                                                         # try a blast search
+           {
+            my $seqfile = "/tmp/kbsl$$.fasta";                       # put the sequence into a tmp fasta
+                open( TMPSEQ, ">$seqfile" ) || die "Can't write to $seqfile: $!\n";
+            print TMPSEQ ">$md5\n";
+            print TMPSEQ $protseqs->{$md5}, "\n";
+            #
+            # TODO: probably should put a reasonable cutoff on evalue or score to reduce
+            #       output size.  
+            open( BLAST, "blastp -db /home/ubuntu/Auxfiles/pdb_md5_prot -outfmt 7 -query $seqfile|" )
+               || die "can't blastp: $!\n";
 
-        #$results->{$md5} = [ $protseqs->{$md5} ]; 
+            while ( $_ = <BLAST> )
+	       {
+                next if ( /^#/ );                                   # TODO maybe check for header here?
+                my ($seqid, $pdb_md5_id, $percent_id, $alen) = split( /\s+/ );
+                if ( $percent_id >= 70.0 && (100.0 * $alen / $seqlength ) > 90.0 )
+                   {
+                    my $hits = $self->{'md5pdbtab'}->{$pdb_md5_id};
+                    if ( $hits )
+                       {
+                        foreach my $r ( @{$hits} )
+                           {
+                            push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
+                                                         'chains'       => $$r[1],
+                                                         'resolution'   => $$r[2],
+                                                         'exact'        => 0,
+                                                         'percent_id'   => $percent_id,
+                                                         'align_length' => $alen         # length of seq
+                                                        } );
+                           }
+                       }
+		   }
+               }
+            close( BLAST );
+            unlink( $seqfile ) || die "Can't unlink $seqfile: $!\n";        # clean up 
+           }            
        }
         
-    #  $results =  { 
-    #               "input_m5s" => [ @{$input_ids} ]
-    # 		    "test" => [ @prots ],
-    #              };
+
     #END lookup_pdb_by_md5
     my @_bad_returns;
     (ref($results) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"results\" (value was \"$results\")");
