@@ -77,15 +77,30 @@ sub  load_md5_pdb_table
         s/^\s+//;
         my ($md5,$pdb_id,$chains) = split( /\s+/ );
         $self->{'md5pdbtab'}->{$md5} = [] unless( defined( $self->{'md5pdbtab'}->{$md5} ) );
-        my $resolution = 2.0;
-        push( @{$self->{'md5pdbtab'}->{$md5}}, [ $pdb_id, $chains, $resolution ] );
+        push( @{$self->{'md5pdbtab'}->{$md5}}, [ $pdb_id, $chains ] );
        }
     close( MDP );
     print STDERR "LOADED MD5 PDB TABLE  two\n";
-    #foreach my $k ( keys( %{$self->{'md5pdbtab'}} ) )
-    #   {
-    #    print "$k: ", join( ", ", map( join( " ", @{$_} ), @{$self->{'md5pdbtab'}->{$k}} ) ), "\n";
-    #   }
+   }
+
+
+sub  load_res_aux_table
+   {
+    my $self = shift;
+    my $auxpdbfile = "/home/ubuntu/Auxfiles/pdb.res.cofactors.tab";
+
+    open( AUX, $auxpdbfile ) || die "Can't open $auxpdbfile: $!\n";
+    $self->{'pdbres'} = {};
+    while ( $_ = <AUX> )
+       {
+        chomp;
+        s/^\s*//;
+        my ( $pdb_id, $res, $cofactor, $engineered ) = split( /\s+/ );
+        $res = '-1' if ( $res eq 'NA' );
+        $self->{'pdbres'}->{$pdb_id} = $res;
+       }
+    close( AUX );
+    print STDERR "LOADED PDB RES TABLE\n";
    }
 
 #END_HEADER
@@ -104,6 +119,8 @@ sub new
     ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();    
 
     $self->load_md5_pdb_table();
+
+    $self->load_res_aux_table();
 
     #END_CONSTRUCTOR
 
@@ -220,7 +237,7 @@ sub lookup_pdb_by_md5
                {
                 push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
                                              'chains'       => $$r[1],
-                                             'resolution'   => $$r[2],
+                                             'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
                                              'exact'        => 1,
                                              'percent_id'   => 100.0,
                                              'align_length' => $seqlength
@@ -252,7 +269,7 @@ sub lookup_pdb_by_md5
                            {
                             push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
                                                          'chains'       => $$r[1],
-                                                         'resolution'   => $$r[2],
+                                                         'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
                                                          'exact'        => 0,
                                                          'percent_id'   => $percent_id,
                                                          'align_length' => $alen         # length of seq
