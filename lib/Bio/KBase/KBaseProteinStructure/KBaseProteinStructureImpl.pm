@@ -282,7 +282,18 @@ sub lookup_pdb_by_md5
             unlink( $seqfile ) || die "Can't unlink $seqfile: $!\n";        # clean up 
            }            
        }
-        
+
+    # sort multiple hits for each input md5
+    foreach my $md5 ( keys( %{$results} ) )
+       {
+        @{$results->{$md5}} = sort { 
+                                     if ( $a->{'percent_id'} != $b->{'percent_id'} )
+                                        { return( $b->{'percent_id'} <=> $a->{'percent_id'} ); }
+                                     else
+                                        { return( $a->{'resolution'} <=> $b->{'resolution'} ); }
+                                   } 
+                                   ( @{$results->{$md5}} );
+       }
 
     #END lookup_pdb_by_md5
     my @_bad_returns;
