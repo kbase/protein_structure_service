@@ -6,11 +6,15 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 module KBaseProteinStructure { 
 
 
-    /* Inputs to service: */
+    /* Inputs to services: */
 
-    typedef string md5_id_t;             /* KBase Protein MD5 id  */
+    typedef string md5_id_t;                    /* KBase protein MD5 id  */
 
-    typedef list<md5_id_t> md5_ids_t;    /* list of the same */
+    typedef list<md5_id_t> md5_ids_t;           /* list of protein MD5s */
+
+    typedef string feature_id_t;                /* KBase feature id, ala "kb|g.0.peg.781" */
+
+    typedef list<feature_id_t> feature_ids_t;   /* list of feature ids */
 
 
     /* Outputs from service */
@@ -39,6 +43,8 @@ module KBaseProteinStructure {
     typedef list<PDBMatch> PDBMatches;    /* list of the same */
 
     typedef mapping<md5_id_t,PDBMatches> md5_to_pdb_matches;
+
+    typedef mapping<feature_id_t,PDBMatches> fid_to_pdb_matches;
     
 
     /*FUNCTIONS*/
@@ -46,5 +52,7 @@ module KBaseProteinStructure {
     /* primary function - accepts a list of protein MD5s.  returns a hash (mapping?)  */
     /* of each to a list of PDBMatch records */
 
-    funcdef lookup_pdb_by_md5( md5_ids_t input_ids ) returns (md5_to_pdb_matches results);
+    funcdef lookup_pdb_by_md5( md5_ids_t input_ids ) returns( md5_to_pdb_matches results);
+
+    funcdef lookup_pdb_by_fid( feature_ids_t feature_ids ) returns( fid_to_pdb_matches results );
 }; 
