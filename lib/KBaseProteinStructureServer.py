@@ -230,6 +230,9 @@ class Application(object):
         self.rpc_service.add(impl_KBaseProteinStructure.lookup_pdb_by_md5,
                              name='KBaseProteinStructure.lookup_pdb_by_md5',
                              types=[list])
+        self.rpc_service.add(impl_KBaseProteinStructure.lookup_pdb_by_fid,
+                             name='KBaseProteinStructure.lookup_pdb_by_fid',
+                             types=[list])
 
     def __call__(self, environ, start_response):
         # Context object, equivalent to the perl impl CallContext

@@ -16,12 +16,15 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
       <li><a href="#lookup_pdb_by_md5">lookup_pdb_by_md5</a></li>
+      <li><a href="#lookup_pdb_by_fid">lookup_pdb_by_fid</a></li>
     </ul>
   </li>
   <li><a href="#TYPES">TYPES</a>
     <ul>
       <li><a href="#md5_id_t">md5_id_t</a></li>
       <li><a href="#md5_ids_t">md5_ids_t</a></li>
+      <li><a href="#feature_id_t">feature_id_t</a></li>
+      <li><a href="#feature_ids_t">feature_ids_t</a></li>
       <li><a href="#pdb_id_t">pdb_id_t</a></li>
       <li><a href="#chains_t">chains_t</a></li>
       <li><a href="#exact_t">exact_t</a></li>
@@ -31,6 +34,7 @@
       <li><a href="#PDBMatch">PDBMatch</a></li>
       <li><a href="#PDBMatches">PDBMatches</a></li>
       <li><a href="#md5_to_pdb_matches">md5_to_pdb_matches</a></li>
+      <li><a href="#fid_to_pdb_matches">fid_to_pdb_matches</a></li>
     </ul>
   </li>
 </ul>
@@ -86,16 +90,55 @@ align_length_t is an int</pre>
 </dd>
 </dl>
 
+<h2 id="lookup_pdb_by_fid">lookup_pdb_by_fid</h2>
+
+<pre><code>  $results = $obj-&gt;lookup_pdb_by_fid($feature_ids)</code></pre>
+
+<dl>
+
+<dt id="Parameter-and-return-types1">Parameter and return types</dt>
+<dd>
+
+
+
+<pre>
+$feature_ids is a feature_ids_t
+$results is a fid_to_pdb_matches
+feature_ids_t is a reference to a list where each element is a feature_id_t
+feature_id_t is a string
+fid_to_pdb_matches is a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int</pre>
+
+</dd>
+<dt id="Description1">Description</dt>
+<dd>
+
+</dd>
+</dl>
+
 <h1 id="TYPES">TYPES</h1>
 
 <h2 id="md5_id_t">md5_id_t</h2>
 
 <dl>
 
-<dt id="Description1">Description</dt>
+<dt id="Description2">Description</dt>
 <dd>
 
-<p>Inputs to service:</p>
+<p>Inputs to services:</p>
 
 </dd>
 <dt id="Definition">Definition</dt>
@@ -114,10 +157,10 @@ a string
 
 <dl>
 
-<dt id="Description2">Description</dt>
+<dt id="Description3">Description</dt>
 <dd>
 
-<p>KBase Protein MD5 id</p>
+<p>KBase protein MD5 id</p>
 
 </dd>
 <dt id="Definition1">Definition</dt>
@@ -132,17 +175,61 @@ a reference to a list where each element is a md5_id_t
 </dd>
 </dl>
 
+<h2 id="feature_id_t">feature_id_t</h2>
+
+<dl>
+
+<dt id="Description4">Description</dt>
+<dd>
+
+<p>list of protein MD5s</p>
+
+</dd>
+<dt id="Definition2">Definition</dt>
+<dd>
+
+
+
+<pre>
+a string
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="feature_ids_t">feature_ids_t</h2>
+
+<dl>
+
+<dt id="Description5">Description</dt>
+<dd>
+
+<p>KBase feature id, ala &quot;kb|g.0.peg.781&quot;</p>
+
+</dd>
+<dt id="Definition3">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a list where each element is a feature_id_t
+</pre>
+
+</dd>
+</dl>
+
 <h2 id="pdb_id_t">pdb_id_t</h2>
 
 <dl>
 
-<dt id="Description3">Description</dt>
+<dt id="Description6">Description</dt>
 <dd>
 
 <p>Outputs from service</p>
 
 </dd>
-<dt id="Definition2">Definition</dt>
+<dt id="Definition4">Definition</dt>
 <dd>
 
 
@@ -158,13 +245,13 @@ a string
 
 <dl>
 
-<dt id="Description4">Description</dt>
+<dt id="Description7">Description</dt>
 <dd>
 
 <p>PDB id</p>
 
 </dd>
-<dt id="Definition3">Definition</dt>
+<dt id="Definition5">Definition</dt>
 <dd>
 
 
@@ -180,13 +267,13 @@ a string
 
 <dl>
 
-<dt id="Description5">Description</dt>
+<dt id="Description8">Description</dt>
 <dd>
 
 <p>subchains of a match, i.e. &quot;(A,C,D)&quot;</p>
 
 </dd>
-<dt id="Definition4">Definition</dt>
+<dt id="Definition6">Definition</dt>
 <dd>
 
 
@@ -202,13 +289,13 @@ an int
 
 <dl>
 
-<dt id="Description6">Description</dt>
+<dt id="Description9">Description</dt>
 <dd>
 
 <p>1 (true) if exact match to pdb sequence</p>
 
 </dd>
-<dt id="Definition5">Definition</dt>
+<dt id="Definition7">Definition</dt>
 <dd>
 
 
@@ -224,13 +311,13 @@ a float
 
 <dl>
 
-<dt id="Description7">Description</dt>
+<dt id="Description10">Description</dt>
 <dd>
 
 <p>structural resolution (angstroms)</p>
 
 </dd>
-<dt id="Definition6">Definition</dt>
+<dt id="Definition8">Definition</dt>
 <dd>
 
 
@@ -246,13 +333,13 @@ a float
 
 <dl>
 
-<dt id="Description8">Description</dt>
+<dt id="Description11">Description</dt>
 <dd>
 
 <p>% identity from BLASTP matches</p>
 
 </dd>
-<dt id="Definition7">Definition</dt>
+<dt id="Definition9">Definition</dt>
 <dd>
 
 
@@ -268,13 +355,13 @@ an int
 
 <dl>
 
-<dt id="Description9">Description</dt>
+<dt id="Description12">Description</dt>
 <dd>
 
 <p>alignment length</p>
 
 </dd>
-<dt id="Definition8">Definition</dt>
+<dt id="Definition10">Definition</dt>
 <dd>
 
 
@@ -295,7 +382,7 @@ align_length has a value which is an align_length_t</pre>
 
 <dl>
 
-<dt id="Definition9">Definition</dt>
+<dt id="Definition11">Definition</dt>
 <dd>
 
 
@@ -311,19 +398,35 @@ a reference to a list where each element is a PDBMatch
 
 <dl>
 
-<dt id="Description10">Description</dt>
+<dt id="Description13">Description</dt>
 <dd>
 
 <p>list of the same</p>
 
 </dd>
-<dt id="Definition10">Definition</dt>
+<dt id="Definition12">Definition</dt>
 <dd>
 
 
 
 <pre>
 a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="fid_to_pdb_matches">fid_to_pdb_matches</h2>
+
+<dl>
+
+<dt id="Definition13">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
 </pre>
 
 </dd>

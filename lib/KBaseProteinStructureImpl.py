@@ -42,3 +42,16 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
                              'results is not type dict as required.')
         # return the results
         return [results]
+
+    def lookup_pdb_by_fid(self, feature_ids):
+        # self.ctx is set by the wsgi application class
+        # return variables are: results
+        #BEGIN lookup_pdb_by_fid
+        #END lookup_pdb_by_fid
+
+        #At some point might do deeper type checking...
+        if not isinstance(results, dict):
+            raise ValueError('Method lookup_pdb_by_fid return value ' +
+                             'results is not type dict as required.')
+        # return the results
+        return [results]

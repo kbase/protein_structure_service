@@ -39,23 +39,6 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
 
-sub  get_protein_sequences
-   {
-    my $self = shift;
-    my @md5s = @_;
-
-    my $h = $self->{'cdmi'}->get_entity_ProteinSequence( [ @md5s ], ['sequence']);
-
-    die "no h\n" unless( $h );
-
-    # make a result hash where md5's are keys, protein seq is
-    # the value
-
-    my $res = {};
-    map { $res->{$h->{$_}->{'id'}} = $h->{$_}->{'sequence'} } keys( %{$h} );
-
-    return( $res );
-   }
 
 # TODO:  do we need to put these files into deploy.cfg?
 
@@ -101,6 +84,145 @@ sub  load_res_aux_table
        }
     close( AUX );
     print STDERR "LOADED PDB RES TABLE\n";
+   }
+
+# cdm_md5_to_md5_sequences() and cdm_fids_to_md5_sequences() both return
+# tables, keyed or indexed by the ids in each case, to listref of [ md5, seq ]
+#   in the case of cdm_md5_to_md5_sequences, the md5 is redundant with the 
+# input id, but that makes the processing by get_matches() the same
+# in either case
+
+sub  cdm_md5_to_md5_sequences
+   {
+    my $self = shift;
+    my $md5s = shift;
+
+    my $h = $self->{'cdmi'}->get_entity_ProteinSequence( $md5s, ['sequence']);
+
+    die "no h\n" unless( $h );
+
+    # make a result hash id (md5) -> [ md5, sequence ]
+
+    my $md5_seq_tab = {};
+    map { $md5_seq_tab->{$h->{$_}->{'id'}} = [ $h->{$_}->{'id'}, $h->{$_}->{'sequence'} ] } keys( %{$h} );
+
+    return( $md5_seq_tab );
+   }
+
+#
+# This takes as input a list of feature ids, and returns a hash table which maps
+#  the feature id to a listref of both md5 id, and protein sequence  
+#      fid -> [ md5, seq ]
+#  as obtained from central store.
+# (Note:  CMDIClient::get_relationship_Produces() seems to return a one-to-one
+#  mapping.  I don't know how to verify this)
+#
+sub  cdm_fids_to_md5_sequnces
+   {
+    my $self = shift;
+    my $fids = shift;
+    my $prods = $self->{'cdmi'}->get_relationship_Produces( $fids, 
+                                                            ['id'], 
+                                                            ['from_link','to_link'],
+                                                            ['id','sequence'] );
+
+    # TODO: error handling if get_relationship_Produces() failes?
+
+    my $md5_seq_tab = {};
+    foreach my $r ( @{$prods} )
+       {
+        my $fid = $$r[0]->{'id'};
+        # TODO: insert error check here for multiple hit on
+        #       $md5_seq_tab->{$fid} - this should not exist already. If it does
+        #       then its a duplicate.  Then what?
+        $md5_seq_tab->{$fid} = [ map( $$r[2]->{$_}, ( 'id', 'sequence' ) ) ];
+       }
+    return( $md5_seq_tab );
+   }
+
+# get_matches assembles (and sorts) the final results hash reference
+# for both lookup functions
+
+sub  get_matches
+   {
+    my $self = shift;
+    my $input_ids = shift;
+    my $md5_seqs = shift;
+
+    my $results = {};                    # indexed by id (either md5 or fids)
+    foreach my $id ( @{$input_ids} )     # for each input id
+       {
+        $results->{$id} = [] unless( defined( $results->{$id} ) );   # initialize results list
+        my ($md5,$protseq) = @{$md5_seqs->{$id}};
+        my $seqlength = length( $protseq );                          # length for alignment cutoff
+
+        # TODO: put in error handling - what if the record didn't come back?
+
+        if ( defined( $self->{'md5pdbtab'}->{$md5} ) )               # if we have exact PDB 
+           {                                                         # matches, then use those
+            foreach my $r ( @{$self->{'md5pdbtab'}->{$md5}} )
+               {
+                push( @{$results->{$id}}, { 'pdb_id'       => $$r[0], 
+                                            'chains'       => $$r[1],
+                                            'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
+                                            'exact'        => 1,
+                                            'percent_id'   => 100.0,
+                                            'align_length' => $seqlength
+                                          } );
+               }
+           }
+        else                                                         # no exact match, so try a blast search
+           {
+            my $seqfile = "/tmp/kbsl$$.fasta";                       # put the sequence into a tmp fasta
+                open( TMPSEQ, ">$seqfile" ) || die "Can't write to $seqfile: $!\n";
+            print TMPSEQ ">$md5\n";
+            print TMPSEQ $protseq, "\n";
+            #
+            # TODO: probably should put a reasonable cutoff on evalue or score to reduce
+            #       output size.  
+            open( BLAST, "blastp -db /home/ubuntu/Auxfiles/pdb_md5_prot -outfmt 7 -query $seqfile|" )
+               || die "can't blastp: $!\n";
+
+            while ( $_ = <BLAST> )
+	       {
+                next if ( /^#/ );                                   # TODO maybe check for header here?
+                my ($seqid, $pdb_md5_id, $percent_id, $alen) = split( /\s+/ );
+                if ( $percent_id >= 70.0 && (100.0 * $alen / $seqlength ) > 90.0 )
+                   {
+                    my $hits = $self->{'md5pdbtab'}->{$pdb_md5_id};
+                    if ( $hits )
+                       {
+                        foreach my $r ( @{$hits} )
+                           {
+                            push( @{$results->{$id}}, { 'pdb_id'       => $$r[0], 
+                                                        'chains'       => $$r[1],
+                                                        'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
+                                                        'exact'        => 0,
+                                                        'percent_id'   => $percent_id,
+                                                        'align_length' => $alen         # length of seq
+                                                       } );
+                           }
+                       }
+		   }
+               }
+            close( BLAST );
+            unlink( $seqfile ) || die "Can't unlink $seqfile: $!\n";        # clean up 
+           }            
+       }
+
+    # sort multiple hits for each input md5
+    foreach my $id ( keys( %{$results} ) )
+       {
+        @{$results->{$id}} = sort { 
+                                     if ( $a->{'percent_id'} != $b->{'percent_id'} )
+                                        { return( $b->{'percent_id'} <=> $a->{'percent_id'} ); }
+                                     else
+                                        { return( $a->{'resolution'} <=> $b->{'resolution'} ); }
+                                   } 
+                                   ( @{$results->{$id}} );
+       }
+
+    return( $results );
    }
 
 #END_HEADER
@@ -222,78 +344,9 @@ sub lookup_pdb_by_md5
     my($results);
     #BEGIN lookup_pdb_by_md5
 
-    # should only do this if no direct pdb match?
-    my $protseqs = $self->get_protein_sequences( @{$input_ids} );
+    my $md5_seqs = $self->cdm_md5_to_md5_sequences( $input_ids );
 
-    my $results = {};
-    foreach my $md5 ( @{$input_ids} )     # for each sequence
-       {
-        $results->{$md5} = [] unless( defined( $results->{$md5} ) ); # initialize results list
-        my $seqlength = length( $protseqs->{$md5} );                 # length for alignment cutoff
-
-        if ( defined( $self->{'md5pdbtab'}->{$md5} ) )               # if we have exact PDB 
-           {                                                         # matches, then use those
-            foreach my $r ( @{$self->{'md5pdbtab'}->{$md5}} )
-               {
-                push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
-                                             'chains'       => $$r[1],
-                                             'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
-                                             'exact'        => 1,
-                                             'percent_id'   => 100.0,
-                                             'align_length' => $seqlength
-                                           } );
-               }
-           }
-        else                                                         # try a blast search
-           {
-            my $seqfile = "/tmp/kbsl$$.fasta";                       # put the sequence into a tmp fasta
-                open( TMPSEQ, ">$seqfile" ) || die "Can't write to $seqfile: $!\n";
-            print TMPSEQ ">$md5\n";
-            print TMPSEQ $protseqs->{$md5}, "\n";
-            #
-            # TODO: probably should put a reasonable cutoff on evalue or score to reduce
-            #       output size.  
-            open( BLAST, "blastp -db /home/ubuntu/Auxfiles/pdb_md5_prot -outfmt 7 -query $seqfile|" )
-               || die "can't blastp: $!\n";
-
-            while ( $_ = <BLAST> )
-	       {
-                next if ( /^#/ );                                   # TODO maybe check for header here?
-                my ($seqid, $pdb_md5_id, $percent_id, $alen) = split( /\s+/ );
-                if ( $percent_id >= 70.0 && (100.0 * $alen / $seqlength ) > 90.0 )
-                   {
-                    my $hits = $self->{'md5pdbtab'}->{$pdb_md5_id};
-                    if ( $hits )
-                       {
-                        foreach my $r ( @{$hits} )
-                           {
-                            push( @{$results->{$md5}}, { 'pdb_id'       => $$r[0], 
-                                                         'chains'       => $$r[1],
-                                                         'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
-                                                         'exact'        => 0,
-                                                         'percent_id'   => $percent_id,
-                                                         'align_length' => $alen         # length of seq
-                                                        } );
-                           }
-                       }
-		   }
-               }
-            close( BLAST );
-            unlink( $seqfile ) || die "Can't unlink $seqfile: $!\n";        # clean up 
-           }            
-       }
-
-    # sort multiple hits for each input md5
-    foreach my $md5 ( keys( %{$results} ) )
-       {
-        @{$results->{$md5}} = sort { 
-                                     if ( $a->{'percent_id'} != $b->{'percent_id'} )
-                                        { return( $b->{'percent_id'} <=> $a->{'percent_id'} ); }
-                                     else
-                                        { return( $a->{'resolution'} <=> $b->{'resolution'} ); }
-                                   } 
-                                   ( @{$results->{$md5}} );
-       }
+    my $results = $self->get_matches( $input_ids, $md5_seqs );
 
     #END lookup_pdb_by_md5
     my @_bad_returns;
@@ -302,6 +355,111 @@ sub lookup_pdb_by_md5
 	my $msg = "Invalid returns passed to lookup_pdb_by_md5:\n" . join("", map { "\t$_\n" } @_bad_returns);
 	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
 							       method_name => 'lookup_pdb_by_md5');
+    }
+    return($results);
+}
+
+
+
+
+=head2 lookup_pdb_by_fid
+
+  $results = $obj->lookup_pdb_by_fid($feature_ids)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$feature_ids is a feature_ids_t
+$results is a fid_to_pdb_matches
+feature_ids_t is a reference to a list where each element is a feature_id_t
+feature_id_t is a string
+fid_to_pdb_matches is a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$feature_ids is a feature_ids_t
+$results is a fid_to_pdb_matches
+feature_ids_t is a reference to a list where each element is a feature_id_t
+feature_id_t is a string
+fid_to_pdb_matches is a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
+
+
+=end text
+
+
+
+=item Description
+
+
+
+=back
+
+=cut
+
+sub lookup_pdb_by_fid
+{
+    my $self = shift;
+    my($feature_ids) = @_;
+
+    my @_bad_arguments;
+    (ref($feature_ids) eq 'ARRAY') or push(@_bad_arguments, "Invalid type for argument \"feature_ids\" (value was \"$feature_ids\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to lookup_pdb_by_fid:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'lookup_pdb_by_fid');
+    }
+
+    my $ctx = $Bio::KBase::KBaseProteinStructure::Service::CallContext;
+    my($results);
+    #BEGIN lookup_pdb_by_fid
+
+    my $md5_seqs = $self->cdm_fids_to_md5_sequences( $feature_ids );
+
+    my $results = $self->get_matches( $feature_ids, $md5_seqs );
+
+    #END lookup_pdb_by_fid
+    my @_bad_returns;
+    (ref($results) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"results\" (value was \"$results\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to lookup_pdb_by_fid:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'lookup_pdb_by_fid');
     }
     return($results);
 }
@@ -355,7 +513,7 @@ sub version {
 
 =item Description
 
-Inputs to service:
+Inputs to services:
 
 
 =item Definition
@@ -386,7 +544,7 @@ a string
 
 =item Description
 
-KBase Protein MD5 id
+KBase protein MD5 id
 
 
 =item Definition
@@ -402,6 +560,68 @@ a reference to a list where each element is a md5_id_t
 =begin text
 
 a reference to a list where each element is a md5_id_t
+
+=end text
+
+=back
+
+
+
+=head2 feature_id_t
+
+=over 4
+
+
+
+=item Description
+
+list of protein MD5s
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 feature_ids_t
+
+=over 4
+
+
+
+=item Description
+
+KBase feature id, ala "kb|g.0.peg.781"
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a list where each element is a feature_id_t
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a list where each element is a feature_id_t
 
 =end text
 
@@ -690,6 +910,32 @@ a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
 =begin text
 
 a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+
+=end text
+
+=back
+
+
+
+=head2 fid_to_pdb_matches
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
 
 =end text
 

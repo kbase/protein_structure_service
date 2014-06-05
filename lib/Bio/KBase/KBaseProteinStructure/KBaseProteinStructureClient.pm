@@ -163,6 +163,121 @@ sub lookup_pdb_by_md5
 
 
 
+=head2 lookup_pdb_by_fid
+
+  $results = $obj->lookup_pdb_by_fid($feature_ids)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$feature_ids is a feature_ids_t
+$results is a fid_to_pdb_matches
+feature_ids_t is a reference to a list where each element is a feature_id_t
+feature_id_t is a string
+fid_to_pdb_matches is a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$feature_ids is a feature_ids_t
+$results is a fid_to_pdb_matches
+feature_ids_t is a reference to a list where each element is a feature_id_t
+feature_id_t is a string
+fid_to_pdb_matches is a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	resolution has a value which is a resolution_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+resolution_t is a float
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
+
+
+=end text
+
+=item Description
+
+
+
+=back
+
+=cut
+
+sub lookup_pdb_by_fid
+{
+    my($self, @args) = @_;
+
+# Authentication: none
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function lookup_pdb_by_fid (received $n, expecting 1)");
+    }
+    {
+	my($feature_ids) = @args;
+
+	my @_bad_arguments;
+        (ref($feature_ids) eq 'ARRAY') or push(@_bad_arguments, "Invalid type for argument 1 \"feature_ids\" (value was \"$feature_ids\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to lookup_pdb_by_fid:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'lookup_pdb_by_fid');
+	}
+    }
+
+    my $result = $self->{client}->call($self->{url}, {
+	method => "KBaseProteinStructure.lookup_pdb_by_fid",
+	params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'lookup_pdb_by_fid',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method lookup_pdb_by_fid",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'lookup_pdb_by_fid',
+				       );
+    }
+}
+
+
+
 sub version {
     my ($self) = @_;
     my $result = $self->{client}->call($self->{url}, {
@@ -174,16 +289,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'lookup_pdb_by_md5',
+                method_name => 'lookup_pdb_by_fid',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method lookup_pdb_by_md5",
+            error => "Error invoking method lookup_pdb_by_fid",
             status_line => $self->{client}->status_line,
-            method_name => 'lookup_pdb_by_md5',
+            method_name => 'lookup_pdb_by_fid',
         );
     }
 }
@@ -228,7 +343,7 @@ sub _validate_version {
 
 =item Description
 
-Inputs to service:
+Inputs to services:
 
 
 =item Definition
@@ -259,7 +374,7 @@ a string
 
 =item Description
 
-KBase Protein MD5 id
+KBase protein MD5 id
 
 
 =item Definition
@@ -275,6 +390,68 @@ a reference to a list where each element is a md5_id_t
 =begin text
 
 a reference to a list where each element is a md5_id_t
+
+=end text
+
+=back
+
+
+
+=head2 feature_id_t
+
+=over 4
+
+
+
+=item Description
+
+list of protein MD5s
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 feature_ids_t
+
+=over 4
+
+
+
+=item Description
+
+KBase feature id, ala "kb|g.0.peg.781"
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a list where each element is a feature_id_t
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a list where each element is a feature_id_t
 
 =end text
 
@@ -563,6 +740,32 @@ a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
 =begin text
 
 a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
+
+=end text
+
+=back
+
+
+
+=head2 fid_to_pdb_matches
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
 
 =end text
 

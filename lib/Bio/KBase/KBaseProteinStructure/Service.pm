@@ -17,6 +17,7 @@ our $CallContext;
 
 our %return_counts = (
         'lookup_pdb_by_md5' => 1,
+        'lookup_pdb_by_fid' => 1,
         'version' => 1,
 );
 
@@ -27,6 +28,7 @@ sub _build_valid_methods
     my($self) = @_;
     my $methods = {
         'lookup_pdb_by_md5' => 1,
+        'lookup_pdb_by_fid' => 1,
         'version' => 1,
     };
     return $methods;
