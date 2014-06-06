@@ -117,7 +117,7 @@ sub  cdm_md5_to_md5_sequences
 # (Note:  CMDIClient::get_relationship_Produces() seems to return a one-to-one
 #  mapping.  I don't know how to verify this)
 #
-sub  cdm_fids_to_md5_sequnces
+sub  cdm_fids_to_md5_sequences
    {
     my $self = shift;
     my $fids = shift;
