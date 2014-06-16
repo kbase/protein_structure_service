@@ -38,7 +38,7 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 #
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
-
+use Data::Dumper;
 
 # TODO:  do we need to put these files into deploy.cfg?
 
@@ -80,7 +80,7 @@ sub  load_res_aux_table
         s/^\s*//;
         my ( $pdb_id, $res, $cofactor, $engineered ) = split( /\s+/ );
         $res = '-1' if ( $res eq 'NA' );
-        $self->{'pdbres'}->{$pdb_id} = $res;
+        $self->{'pdbres'}->{$pdb_id} = 1.0 * $res;
        }
     close( AUX );
     print STDERR "LOADED PDB RES TABLE\n";
@@ -198,8 +198,8 @@ sub  get_matches
                                                         'chains'       => $$r[1],
                                                         'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
                                                         'exact'        => 0,
-                                                        'percent_id'   => $percent_id,
-                                                        'align_length' => $alen         # length of seq
+                                                        'percent_id'   => 1.0 * $percent_id,
+                                                        'align_length' => 1 * $alen         # length of seq
                                                        } );
                            }
                        }
