@@ -1,0 +1,9 @@
+*.p[ym].bak-[0-9]*
+*~
+\#*#
+pdb/*.phr
+pdb/*.pin
+pdb/*.psq
+pdb/pdb.md5.tab
+pdb/pdb.uniq.md5.fasta
+
