@@ -19,7 +19,6 @@
 #
 
 use strict;
-use Digest::SHA1  qw( sha1 sha1_hex sha1_base64 );
 use Digest::MD5   qw( md5 md5_hex md5_base64 );
 
 my $seqfile = "pdb_seqres.txt";
