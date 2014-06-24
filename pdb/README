@@ -1,0 +1,59 @@
+# Auxilliary PDB sequence-related files used by the service
+#  (Sean R. McCorkle, 24 jun 2014)
+#
+#
+# To update:
+#
+     wget 'ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz'
+
+     make
+
+#
+# Description of files:
+#
+# 1) we get PDB protein sequences from the PDB ftp site
+#   ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz
+#   (lets just leave it in compressed format for now)
+#
+#   pdb_seqres.txt is a fasta format collection of all sequences
+#   (all chains) from PDB.  The contents look like this
+#
+# >104l_A mol:protein length:166  T4 LYSOZYME
+# MNIFEMLRIDEGLRLKIYKDTEGYYTIGIGHLLTKSPSLNAAKSAAELDKAIGRNTNGVITKDEAEKLFNQDVDAAVRGILRNAKLKPVYDSLDAVRRAALINMVFQMGETGVAGFTNSLRMLQQKRWDEAAVNLAKSRWYNQ
+# TPNRAKRVITTFRTGTWDAYKNL
+# >104l_B mol:protein length:166  T4 LYSOZYME
+# MNIFEMLRIDEGLRLKIYKDTEGYYTIGIGHLLTKSPSLNAAKSAAELDKAIGRNTNGVITKDEAEKLFNQDVDAAVRGILRNAKLKPVYDSLDAVRRAALINMVFQMGETGVAGFTNSLRMLQQKRWDEAAVNLAKSRWYNQ
+# TPNRAKRVITTFRTGTWDAYKNL
+#
+# Parsing out the desired information from the fasta headers:
+#
+#      1) 104l_A is a PDB id (104l) and a chain (A) 
+#
+#      2)  (we're only interested in mol:protein, ignore other sequences)
+#
+#      no other information from the header is used.
+#
+# (these commands below are implemented in "make" - I repeat them here
+# for explanatory purposes only)
+#
+# There are numerous duplicate sequences in this file (duplicate chains are 
+# common and many proteins have had their structures determined more than once).
+# So, we first condense the sequences (mol:protein only) into a unique set and
+# we replace the names by the md5 hashs
+#
+#
+
+gunzip -c pdb_seqres.txt.gz | ./extract_unique_sequences_md5 >pdb.uniq.md5.fasta
+
+# Next we make a table that maps md5 ids to PDB ids and chaines
+
+gunzip -c pdb_seqres.txt.gz | ./create_md5_pdb_id_mapping >pdb.md5.tab
+
+#
+# make blast database
+# 
+
+makeblastdb -dbtype prot -in pdb.uniq.md5.fasta -title "PDB protein sequences MD5" -out pdb_md5_prot
+
+
+

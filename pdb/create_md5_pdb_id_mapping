@@ -1,0 +1,151 @@
+#!/usr/bin/perl
+#
+#  This program reads the PDB fasta-format sequence file pdb_seqres.txt
+#  on stdin and compiles unique MD5 hashes for each sequence and associates 
+#  them with PDB ids as well as chain identifiers (A,B,...) in the 
+#  structure.
+#
+#  The header of one of the sequences in pdb_seqres.txt looks like
+#
+#  >1s5h_B mol:protein length:219  ANTIBODY FAB FRAGMENT HEAVY CHAIN
+# 
+#  in this case, 1s5h is the PDB structure id, and _B means this sequence
+#  is that of chain B in the structure.  In the case of homo-multimers, 
+#  or repeated chains, each chain sequence is repeated - there is a great
+#  deal of redundancy in the file which must be handled.
+#
+#  For lack of a better word, comp_id (component id) is used for 1s5h_B 
+#  to differentiate from the PDB id 1s5h
+#
+
+use strict;
+use Digest::SHA1  qw( sha1 sha1_hex sha1_base64 );
+use Digest::MD5   qw( md5 md5_hex md5_base64 );
+
+my $seqfile = "pdb_seqres.txt";
+
+my $hdr;
+my $new_hdr;
+my $seq;
+
+my %md5_to_seq;       # maps md5 back to sequence (for checking purposes)
+my %comp_id_to_md5;   # maps uniq comp_id to sequence md5
+my %md5_to_comp_ids;  # maps sequence md5 to a list of comp_ids
+my %pdb_id_to_md5s;   # maps pdb_id to hash reference of md5s
+my %md5_to_pdb_ids;   # maps sequence md5 to a hash reference of pdbs
+
+while ( <> )
+   {
+    if ( /^>(.*)$/ )
+       {
+        $new_hdr = $1;
+        accumulate( $hdr, $seq ) if ( $hdr );
+        $hdr = $new_hdr;
+        $seq = "";
+       }
+    else
+       {
+        chomp;
+        s/\s//g;
+        $seq .= uc( $_ );
+       }
+   }
+
+accumulate( $hdr, $seq ) if ( $hdr );
+
+
+
+#foreach my $p ( keys( %pdb_id_to_md5s ) )
+#   {
+#    print "$p: \n";
+#    my %h = %{$pdb_id_to_md5s{$p}};
+#    my @keys = keys( %h );
+#    while ( my ($m,$n) = each %h )
+#       {
+#        print "$m:$n \n"; 
+#        if ( $#keys > 0 )
+#           { print "  ", $md5_to_seq{$m}, "\n"; }
+#       }
+#    print "\n";
+#   }
+
+foreach my $m ( keys( %md5_to_pdb_ids ) )
+   {
+    #print "$m\n";
+    my @pdbs = keys( %{$md5_to_pdb_ids{$m}} );
+    # are there other md5s in this pdbs
+    foreach my $pdb ( @pdbs )
+       {
+        print "$m   $pdb  ";
+        my @ms = keys( %{$pdb_id_to_md5s{$pdb}} );
+        if ( $#ms > 0 )
+           {
+            #print "compound structure; multiple seqs";
+            print "(", join( ",",  map( (split( /\_/ ))[1], grep( /^$pdb\_/,  @{$md5_to_comp_ids{$m}} ) ) ), ")";
+           }
+        print " \n";
+       }
+   }
+
+
+
+
+
+                         ###############
+                         # Subroutines #
+                         ###############
+
+# accumulate( $hdr, $seq )
+#
+#   $hdr - fasta header
+#   $seq - aa character sequence
+#
+#   generates MD5 hash for $seq, parses $hdr for PDB id and component,
+#   adds entries to these global hashes
+#
+#                     %md5_to_seq
+#                     %comp_id_to_md5
+#                     %md5_to_comp_ids
+#                     %pdb_id_to_md5s
+#                     %md5_to_pdb_ids
+#
+
+sub  accumulate
+   {
+    my ( $hdr, $seq ) = @_;
+
+    my $md5 = md5_hex( $seq );
+
+    ( $hdr =~ /^(\S+)\s+mol:(\S+)\s+length:(\d+)\s+(\S.*)?$/ ) 
+       || die "bad header: $hdr\n";
+    my ($comp_id,$mol,$len,$desc) = ($1,$2,$3,$4);  
+    # ($comp_id is something like "1bfd_J" - PDB id with chain id appended
+
+    return if ( $mol ne 'protein' );   # ignore DNA/RNAs in the file 
+
+    if ( defined( $md5_to_seq{$md5} ) )
+       {  die "seq mismatch $md5\n" unless( $seq eq $md5_to_seq{$md5} );  }
+    else
+       {  $md5_to_seq{$md5} = $seq; }
+    die "this should never happen: duplicate $comp_id $md5 $comp_id_to_md5{$comp_id}\n"
+        if ( defined( $comp_id_to_md5{$comp_id} ) );
+    $comp_id_to_md5{$comp_id} = $md5;
+    # add comp_id to list for $md5: 
+    $md5_to_comp_ids{$md5} = [] unless ( defined( $md5_to_comp_ids{$md5} ) );
+    push( @{$md5_to_comp_ids{$md5}}, $comp_id );
+
+    # extract PDB 4-digit id prefix from $comp_id
+
+    my $pdb_id = $comp_id;
+    $pdb_id =~ s/\_.*$//;
+    $pdb_id_to_md5s{$pdb_id} = {}
+        unless ( defined( $pdb_id_to_md5s{$pdb_id} ) );
+    ${$pdb_id_to_md5s{$pdb_id}}{$md5}++;
+
+    # add comp_id to list for $md5: 
+    $md5_to_pdb_ids{$md5} = {} unless ( defined( $md5_to_pdb_ids{$md5} ) );
+    ${$md5_to_pdb_ids{$md5}}{$pdb_id}++;
+   }
+
+
+ 

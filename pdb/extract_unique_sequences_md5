@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+#
+#  This program reads the PDB fasta-format sequence file pdb_seqres.txt
+#  on stdin and outputs the unique sequences with only the md5 has on the
+#  header line
+#
+
+use strict;
+
+use Digest::MD5   qw( md5 md5_hex md5_base64 );
+
+
+my $hdr;
+my $new_hdr;
+my $rawseq;
+my $seq;
+
+my %have = ();
+
+while ( <> )
+   {
+    if ( /^>(.*)$/ )
+       {
+        $new_hdr = $1;
+        output_if_uniq( $hdr, $seq, $rawseq ) if ( $hdr );
+        $hdr = $new_hdr;
+        $seq = "";
+        $rawseq = "";
+       }
+    else
+       {
+        $rawseq .= $_;
+        chomp;
+        s/\s//g;
+        $seq .= uc( $_ );
+       }
+   }
+
+output_if_uniq( $hdr, $seq, $rawseq ) if ( $hdr );
+
+
+
+
+                         ###############
+                         # Subroutines #
+                         ###############
+
+# output_if_uniq( $hdr, $seq )
+#   1) ignores this sequence unless mol:protein is in header
+#   2) checks to see if $have{$md5} has recorded this md5 yet.
+#        if not, prints out the sequence
+#   3) lastly, records the sequence md5
+#
+
+sub  output_if_uniq
+   {
+    my ( $hdr, $seq, $rawseq ) = @_;
+
+    if ( $hdr =~ / mol:protein / )
+       {
+        my $md5 = md5_hex( $seq );
+
+        print ">$md5\n$rawseq" unless( $have{$md5} );
+        $have{$md5}++;
+       }
+   }
+
+
