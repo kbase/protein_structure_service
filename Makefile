@@ -198,7 +198,7 @@ deploy-scripts:
 # when deploy-libs is called, the deploy-service target is
 # generally concerned with the service start and stop scripts.
 
-deploy-service: deploy-service-scripts
+deploy-service: deploy-service-scripts deploy-service-pdb-data
 
 # Deploying docs here refers to the deployment of documentation
 # of the API. We'll include a description of deploying documentation
@@ -289,3 +289,8 @@ deploy-service-scripts:
 	cp debug_start_service $(SERVICE_DIR)/
 	cp stop_service $(SERVICE_DIR)/
 	cp reboot_service $(SERVICE_DIR)/
+
+deploy-service-pdb-data:
+	cd pdb && make
+
+
