@@ -291,6 +291,10 @@ deploy-service-scripts:
 	cp reboot_service $(SERVICE_DIR)/
 
 deploy-service-pdb-data:
-	cd pdb && make
+	mkdir -p $(SERVICE_DIR)/pdb
+	cp pdb/pdb_seqres.txt.gz $(SERVICE_DIR)/pdb
+	gunzip -c pdb/pdb_seqres.txt.gz | ./pdb/extract_unique_sequences_md5 >$(SERVICE_DIR)/pdb/pdb.uniq.md5.fasta
+	gunzip -c pdb/pdb_seqres.txt.gz | ./pdb/create_md5_pdb_id_mapping >$(SERVICE_DIR)/pdb/pdb.md5.tab
+	cd $(SERVICE_DIR)/pdb && makeblastdb -dbtype prot -in pdb.uniq.md5.fasta -title "PDB protein sequences MD5" -out pdb_md5_prot
 
 

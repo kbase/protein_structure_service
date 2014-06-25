@@ -32,9 +32,7 @@ https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
 #        d) blast execution
 #   3) how to adjust or pass alternate percent id thresholds?
 #       same for match length?
-#   4) preparation of aux files?
-#   5) how to test?
-#   6) scheme for setting a cutoff evalue for blastp?
+#   4) scheme for setting a cutoff evalue for blastp?
 #
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
@@ -49,7 +47,7 @@ use Data::Dumper;
 sub  load_md5_pdb_table
    {
     my $self = shift;
-    my $md5pdbfile = "/home/ubuntu/Auxfiles/pdb.md5.tab";
+    my $md5pdbfile = "/kb/deployment/services/KBaseProteinStructure/pdb/pdb.md5.tab";
 
     open( MDP, $md5pdbfile ) || die "Can't open $md5pdbfile: $!\n";
     $self->{'md5pdbtab'} = {};
@@ -149,6 +147,8 @@ sub  get_matches
     my $input_ids = shift;
     my $md5_seqs = shift;
 
+    my $blastdb = "/kb/deployment/services/KBaseProteinStructure/pdb/pdb_md5_prot";
+
     my $results = {};                    # indexed by id (either md5 or fids)
     foreach my $id ( @{$input_ids} )     # for each input id
        {
@@ -180,7 +180,7 @@ sub  get_matches
             #
             # TODO: probably should put a reasonable cutoff on evalue or score to reduce
             #       output size.  
-            open( BLAST, "blastp -db /home/ubuntu/Auxfiles/pdb_md5_prot -outfmt 7 -query $seqfile|" )
+            open( BLAST, "blastp -db $blastdb -outfmt 7 -query $seqfile|" )
                || die "can't blastp: $!\n";
 
             while ( $_ = <BLAST> )
