@@ -1,8 +1,13 @@
-/* Service for all ......R 
+/* KBaseProteinStructure.spec:  typedef compiler specification for protein structure
+   service
 
 Sean, please refer... 
 https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
+
+   Notes:  25 jun 2014 - removing resolution from the picture for now.
+    
 */
+
 module KBaseProteinStructure { 
 
 
@@ -25,7 +30,7 @@ module KBaseProteinStructure {
 
     typedef int     exact_t;             /* 1 (true) if exact match to pdb sequence */
     
-    typedef float   resolution_t;        /* structural resolution (angstroms) */
+    /* typedef float   resolution_t; */  /* structural resolution (angstroms) */
 
     typedef float   percent_id_t;        /* % identity from BLASTP matches */
  
@@ -34,7 +39,7 @@ module KBaseProteinStructure {
     typedef structure {
                        pdb_id_t        pdb_id;
                        chains_t        chains;
-                       resolution_t    resolution;
+                       /* resolution_t    resolution; */
                        exact_t         exact;
                        percent_id_t    percent_id;
                        align_length_t  align_length;

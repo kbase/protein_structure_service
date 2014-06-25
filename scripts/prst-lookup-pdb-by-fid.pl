@@ -54,19 +54,21 @@ prints verbose output for debugging.
 
 use Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient;
 
-#my $usage = "Usage: $0 [--url=http://kbase.us/services/protein_structure] < MD5_list \n";
-my $usage = "Usage: $0 [--help --version] < fid_list \n";
+#my $service_url = "http://kbase.us/services/protein_structure";
+#my $service_url = "http://localhost:7088";
+my $service_url = "http://140.221.85.122:7088";
 
-#my $url        = "http://localhost:7088";
-my $url        = "http://140.221.85.122:7088";
+my $usage = "Usage: $0 [--help --version] [--url=$service_url]  < fid_list \n";
+
+my $url        = $service_url;
 my $help       = '';
 my $version    = '';
 my $verbose    = '';
 
-GetOptions("help"       => \$help,
-           "version"    => \$version,
-           #"url=s"      => \$url,
-           "verbose"    => \$verbose,
+GetOptions( "help"       => \$help,
+            "version"    => \$version,
+            "url=s"      => \$url,
+            "verbose"    => \$verbose,
            ) or die $usage;
 
 if ( $help )
@@ -74,6 +76,8 @@ if ( $help )
 elsif ( $version )
    { version_then_exit(); }
 die $usage unless @ARGV == 0;
+
+print "url is $url\n" if ( $verbose );
 
 # establish connection to service
 
@@ -95,7 +99,8 @@ if ( $verbose )
    }
 
 # print hits
-my @fields = ( 'pdb_id', 'chains', 'resolution', 'exact', 'percent_id', 'align_len'  );
+#my @fields = ( 'pdb_id', 'chains', 'resolution', 'exact', 'percent_id', 'align_len'  );
+my @fields = ( 'pdb_id', 'chains', 'exact', 'percent_id', 'align_len'  );
 
 foreach my $fid ( @input )
    {

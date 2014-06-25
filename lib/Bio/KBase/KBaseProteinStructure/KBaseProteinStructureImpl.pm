@@ -11,20 +11,19 @@ KBaseProteinStructure
 
 =head1 DESCRIPTION
 
-Service for all ......R 
+KBaseProteinStructure.spec:  typedef compiler specification for protein structure
+service
 
 Sean, please refer... 
 https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
+
+Notes:  25 jun 2014 - removing resolution from the picture for now.
 
 =cut
 
 #BEGIN_HEADER
 
 # TODO:
-#   1) do we put all aux file names into deploy.cfg?
-#      a) pdb md5 list
-#      b) pdb res data
-#      c) pdb blast db
 #   2) Error handling (and recovery?) for 
 #        a) all CMDI connections
 #        b) existence and readability of aux files
@@ -38,7 +37,6 @@ use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
 use Data::Dumper;
 
-# TODO:  do we need to put these files into deploy.cfg?
 
 # this creates a MD5-indexed hash table connecting the unique protein sequence MD5
 # to a list reference of pdb IDs coupled with chain ids (in cases where there are 
@@ -64,25 +62,25 @@ sub  load_md5_pdb_table
     print STDERR "LOADED MD5 PDB TABLE  two\n";
    }
 
-
-sub  load_res_aux_table
-   {
-    my $self = shift;
-    my $auxpdbfile = "/home/ubuntu/Auxfiles/pdb.res.cofactors.tab";
-
-    open( AUX, $auxpdbfile ) || die "Can't open $auxpdbfile: $!\n";
-    $self->{'pdbres'} = {};
-    while ( $_ = <AUX> )
-       {
-        chomp;
-        s/^\s*//;
-        my ( $pdb_id, $res, $cofactor, $engineered ) = split( /\s+/ );
-        $res = '-1' if ( $res eq 'NA' );
-        $self->{'pdbres'}->{$pdb_id} = 1.0 * $res;
-       }
-    close( AUX );
-    print STDERR "LOADED PDB RES TABLE\n";
-   }
+# 25 jun 2015 removing resolution from the system for now
+#sub  load_res_aux_table
+#   {
+#    my $self = shift;
+#    my $auxpdbfile = "/home/ubuntu/Auxfiles/pdb.res.cofactors.tab";
+#
+#    open( AUX, $auxpdbfile ) || die "Can't open $auxpdbfile: $!\n";
+#    $self->{'pdbres'} = {};
+#    while ( $_ = <AUX> )
+#       {
+#        chomp;
+#        s/^\s*//;
+#        my ( $pdb_id, $res, $cofactor, $engineered ) = split( /\s+/ );
+#        $res = '-1' if ( $res eq 'NA' );
+#        $self->{'pdbres'}->{$pdb_id} = 1.0 * $res;
+#       }
+#    close( AUX );
+#    print STDERR "LOADED PDB RES TABLE\n";
+#   }
 
 # cdm_md5_to_md5_sequences() and cdm_fids_to_md5_sequences() both return
 # tables, keyed or indexed by the ids in each case, to listref of [ md5, seq ]
@@ -164,7 +162,7 @@ sub  get_matches
                {
                 push( @{$results->{$id}}, { 'pdb_id'       => $$r[0], 
                                             'chains'       => $$r[1],
-                                            'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
+                                            #'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
                                             'exact'        => 1,
                                             'percent_id'   => 100.0,
                                             'align_length' => $seqlength
@@ -196,7 +194,7 @@ sub  get_matches
                            {
                             push( @{$results->{$id}}, { 'pdb_id'       => $$r[0], 
                                                         'chains'       => $$r[1],
-                                                        'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
+                                                        #'resolution'   => $self->{'pdbres'}->{$$r[0]},   # CAUTION! ERROR HANDLING HERE!
                                                         'exact'        => 0,
                                                         'percent_id'   => 1.0 * $percent_id,
                                                         'align_length' => 1 * $alen         # length of seq
@@ -217,7 +215,9 @@ sub  get_matches
                                      if ( $a->{'percent_id'} != $b->{'percent_id'} )
                                         { return( $b->{'percent_id'} <=> $a->{'percent_id'} ); }
                                      else
-                                        { return( $a->{'resolution'} <=> $b->{'resolution'} ); }
+                                        { #return( $a->{'resolution'} <=> $b->{'resolution'} ); 
+                                         return( $a->{'align_length'} <=> $b->{'align_length'} ); 
+                                        }
                                    } 
                                    ( @{$results->{$id}} );
        }
@@ -242,7 +242,7 @@ sub new
 
     $self->load_md5_pdb_table();
 
-    $self->load_res_aux_table();
+    # $self->load_res_aux_table();  # 25 jun 2014 removing resolution for now
 
     #END_CONSTRUCTOR
 
@@ -277,13 +277,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -303,13 +301,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -382,13 +378,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -408,13 +402,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -722,37 +714,6 @@ an int
 
 
 
-=head2 resolution_t
-
-=over 4
-
-
-
-=item Description
-
-1 (true) if exact match to pdb sequence
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a float
-</pre>
-
-=end html
-
-=begin text
-
-a float
-
-=end text
-
-=back
-
-
-
 =head2 percent_id_t
 
 =over 4
@@ -823,7 +784,7 @@ an int
 
 =item Description
 
-alignment length
+resolution_t    resolution;
 
 
 =item Definition
@@ -834,7 +795,6 @@ alignment length
 a reference to a hash where the following keys are defined:
 pdb_id has a value which is a pdb_id_t
 chains has a value which is a chains_t
-resolution has a value which is a resolution_t
 exact has a value which is an exact_t
 percent_id has a value which is a percent_id_t
 align_length has a value which is an align_length_t
@@ -848,7 +808,6 @@ align_length has a value which is an align_length_t
 a reference to a hash where the following keys are defined:
 pdb_id has a value which is a pdb_id_t
 chains has a value which is a chains_t
-resolution has a value which is a resolution_t
 exact has a value which is an exact_t
 percent_id has a value which is a percent_id_t
 align_length has a value which is an align_length_t

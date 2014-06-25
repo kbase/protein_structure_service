@@ -28,7 +28,6 @@
       <li><a href="#pdb_id_t">pdb_id_t</a></li>
       <li><a href="#chains_t">chains_t</a></li>
       <li><a href="#exact_t">exact_t</a></li>
-      <li><a href="#resolution_t">resolution_t</a></li>
       <li><a href="#percent_id_t">percent_id_t</a></li>
       <li><a href="#align_length_t">align_length_t</a></li>
       <li><a href="#PDBMatch">PDBMatch</a></li>
@@ -45,9 +44,11 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>Service for all ......R</p>
+<p>KBaseProteinStructure.spec: typedef compiler specification for protein structure service</p>
 
 <p>Sean, please refer... https://trac.kbase.us/projects/kbase/wiki/StandardDocuments</p>
+
+<p>Notes: 25 jun 2014 - removing resolution from the picture for now.</p>
 
 <h2 id="lookup_pdb_by_md5">lookup_pdb_by_md5</h2>
 
@@ -70,13 +71,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int</pre>
@@ -111,13 +110,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int</pre>
@@ -285,39 +282,17 @@ an int
 </dd>
 </dl>
 
-<h2 id="resolution_t">resolution_t</h2>
+<h2 id="percent_id_t">percent_id_t</h2>
 
 <dl>
 
 <dt id="Description9">Description</dt>
 <dd>
 
-<p>1 (true) if exact match to pdb sequence</p>
-
-</dd>
-<dt id="Definition7">Definition</dt>
-<dd>
-
-
-
-<pre>
-a float
-</pre>
-
-</dd>
-</dl>
-
-<h2 id="percent_id_t">percent_id_t</h2>
-
-<dl>
-
-<dt id="Description10">Description</dt>
-<dd>
-
 <p>structural resolution (angstroms)</p>
 
 </dd>
-<dt id="Definition8">Definition</dt>
+<dt id="Definition7">Definition</dt>
 <dd>
 
 
@@ -333,13 +308,13 @@ a float
 
 <dl>
 
-<dt id="Description11">Description</dt>
+<dt id="Description10">Description</dt>
 <dd>
 
 <p>% identity from BLASTP matches</p>
 
 </dd>
-<dt id="Definition9">Definition</dt>
+<dt id="Definition8">Definition</dt>
 <dd>
 
 
@@ -355,13 +330,13 @@ an int
 
 <dl>
 
-<dt id="Description12">Description</dt>
+<dt id="Description11">Description</dt>
 <dd>
 
-<p>alignment length</p>
+<p>resolution_t resolution;</p>
 
 </dd>
-<dt id="Definition10">Definition</dt>
+<dt id="Definition9">Definition</dt>
 <dd>
 
 
@@ -370,7 +345,6 @@ an int
 a reference to a hash where the following keys are defined:
 pdb_id has a value which is a pdb_id_t
 chains has a value which is a chains_t
-resolution has a value which is a resolution_t
 exact has a value which is an exact_t
 percent_id has a value which is a percent_id_t
 align_length has a value which is an align_length_t</pre>
@@ -382,7 +356,7 @@ align_length has a value which is an align_length_t</pre>
 
 <dl>
 
-<dt id="Definition11">Definition</dt>
+<dt id="Definition10">Definition</dt>
 <dd>
 
 
@@ -398,13 +372,13 @@ a reference to a list where each element is a PDBMatch
 
 <dl>
 
-<dt id="Description13">Description</dt>
+<dt id="Description12">Description</dt>
 <dd>
 
 <p>list of the same</p>
 
 </dd>
-<dt id="Definition12">Definition</dt>
+<dt id="Definition11">Definition</dt>
 <dd>
 
 
@@ -420,7 +394,7 @@ a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
 
 <dl>
 
-<dt id="Definition13">Definition</dt>
+<dt id="Definition12">Definition</dt>
 <dd>
 
 

@@ -18,10 +18,13 @@ Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient
 =head1 DESCRIPTION
 
 
-Service for all ......R 
+KBaseProteinStructure.spec:  typedef compiler specification for protein structure
+service
 
 Sean, please refer... 
 https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
+
+Notes:  25 jun 2014 - removing resolution from the picture for now.
 
 
 =cut
@@ -68,13 +71,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -94,13 +95,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -183,13 +182,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -209,13 +206,11 @@ PDBMatches is a reference to a list where each element is a PDBMatch
 PDBMatch is a reference to a hash where the following keys are defined:
 	pdb_id has a value which is a pdb_id_t
 	chains has a value which is a chains_t
-	resolution has a value which is a resolution_t
 	exact has a value which is an exact_t
 	percent_id has a value which is a percent_id_t
 	align_length has a value which is an align_length_t
 pdb_id_t is a string
 chains_t is a string
-resolution_t is a float
 exact_t is an int
 percent_id_t is a float
 align_length_t is an int
@@ -552,37 +547,6 @@ an int
 
 
 
-=head2 resolution_t
-
-=over 4
-
-
-
-=item Description
-
-1 (true) if exact match to pdb sequence
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a float
-</pre>
-
-=end html
-
-=begin text
-
-a float
-
-=end text
-
-=back
-
-
-
 =head2 percent_id_t
 
 =over 4
@@ -653,7 +617,7 @@ an int
 
 =item Description
 
-alignment length
+resolution_t    resolution;
 
 
 =item Definition
@@ -664,7 +628,6 @@ alignment length
 a reference to a hash where the following keys are defined:
 pdb_id has a value which is a pdb_id_t
 chains has a value which is a chains_t
-resolution has a value which is a resolution_t
 exact has a value which is an exact_t
 percent_id has a value which is a percent_id_t
 align_length has a value which is an align_length_t
@@ -678,7 +641,6 @@ align_length has a value which is an align_length_t
 a reference to a hash where the following keys are defined:
 pdb_id has a value which is a pdb_id_t
 chains has a value which is a chains_t
-resolution has a value which is a resolution_t
 exact has a value which is an exact_t
 percent_id has a value which is a percent_id_t
 align_length has a value which is an align_length_t
