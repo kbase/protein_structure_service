@@ -69,7 +69,7 @@ default:
 #  test-client and test-scripts (also client) require a working
 #  service, no?  So should not service test occur first? 
 test:	test-service test-client test-scripts 
-	@echo "make test should be run from the expression directory (where you checked it out)"
+	@echo "make test should be run from the protein_structure directory (where you checked it out)"
 	@echo "running client and script tests"
 
 # test-all is deprecated. 
