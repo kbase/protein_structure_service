@@ -65,13 +65,32 @@ default:
 
 # Test Section
 
-test:	test-client test-scripts test-service
+#test:	test-client test-scripts test-service
+#  test-client and test-scripts (also client) require a working
+#  service, no?  So should not service test occur first? 
+test:	test-service test-client test-scripts 
 	@echo "make test should be run from the expression directory (where you checked it out)"
 	@echo "running client and script tests"
 
 # test-all is deprecated. 
 # test-all: test-client test-scripts test-service
 #
+
+# test-service: A server test should not rely on the client libraries
+# or scripts--you should not have a test-service target that depends
+# on the test-client or test-scripts targets. Otherwise, a circular
+# dependency graph could result.
+test-service:
+	# run each test
+	for t in $(SERVER_TESTS) ; do \
+		if [ -f $$t ] ; then \
+			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
+			if [ $$? -ne 0 ] ; then \
+				exit 1 ; \
+			fi \
+		fi \
+	done
+
 # test-client: This is a test of a client library. If it is a
 # client-server module, then it should be run against a running
 # server. You can say that this also tests the server, and I
@@ -107,20 +126,6 @@ test-scripts:
 		fi \
 	done
 
-# test-service: A server test should not rely on the client libraries
-# or scripts--you should not have a test-service target that depends
-# on the test-client or test-scripts targets. Otherwise, a circular
-# dependency graph could result.
-test-service:
-	# run each test
-	for t in $(SERVER_TESTS) ; do \
-		if [ -f $$t ] ; then \
-			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
-			if [ $$? -ne 0 ] ; then \
-				exit 1 ; \
-			fi \
-		fi \
-	done
 
 # Deployment:
 # 
