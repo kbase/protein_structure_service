@@ -11,13 +11,10 @@ KBaseProteinStructure
 
 =head1 DESCRIPTION
 
-KBaseProteinStructure.spec:  typedef compiler specification for protein structure
-service
+KBaseProteinStructure.spec:  typedef compiler specification for protein 
+structure service
 
-Sean, please refer... 
-https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
-
-Notes:  25 jun 2014 - removing resolution from the picture for now.
+   Notes:  25 jun 2014 - removing resolution from the picture for now.
 
 =cut
 
@@ -239,7 +236,7 @@ sub new
     # TODO:  best way to handle error here.
 
     ${$self}{'cdmi'} = Bio::KBase::CDMI::CDMIClient->new_for_script();    
-
+ 
     $self->load_md5_pdb_table();
 
     # $self->load_res_aux_table();  # 25 jun 2014 removing resolution for now

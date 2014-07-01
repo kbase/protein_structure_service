@@ -1,8 +1,5 @@
-/* KBaseProteinStructure.spec:  typedef compiler specification for protein structure
-   service
-
-Sean, please refer... 
-https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
+/* KBaseProteinStructure.spec:  typedef compiler specification for protein 
+                                structure service
 
    Notes:  25 jun 2014 - removing resolution from the picture for now.
     

@@ -8,13 +8,10 @@ class KBaseProteinStructure:
     KBaseProteinStructure
 
     Module Description:
-    KBaseProteinStructure.spec:  typedef compiler specification for protein structure
-service
+    KBaseProteinStructure.spec:  typedef compiler specification for protein 
+structure service
 
-Sean, please refer... 
-https://trac.kbase.us/projects/kbase/wiki/StandardDocuments
-
-Notes:  25 jun 2014 - removing resolution from the picture for now.
+   Notes:  25 jun 2014 - removing resolution from the picture for now.
     '''
 
     ######## WARNING FOR GEVENT USERS #######
