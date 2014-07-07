@@ -44,9 +44,9 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>KBaseProteinStructure.spec: typedef compiler specification for protein structure service</p>
+<p>Module KBaseProteinStructure v0.1 This service provides PDB structure ids which correspond to KBase protein sequences. In cases where there is exact match to a PDB sequence, close matches (via BLASTP) are reported.</p>
 
-<pre><code>   Notes:  25 jun 2014 - removing resolution from the picture for now.</code></pre>
+<p>There are two methods or function calls: lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers lookup_pdb_by_fid - accepts one or more feature ids (or CDS id) Both return a table of matches which include PDB id, 1 or 0 for exact match, percent identity and alignment length.</p>
 
 <h2 id="lookup_pdb_by_md5">lookup_pdb_by_md5</h2>
 
@@ -121,6 +121,8 @@ align_length_t is an int</pre>
 <dt id="Description1">Description</dt>
 <dd>
 
+<p>of each to a list of PDBMatch records</p>
+
 </dd>
 </dl>
 
@@ -133,7 +135,7 @@ align_length_t is an int</pre>
 <dt id="Description2">Description</dt>
 <dd>
 
-<p>Inputs to services:</p>
+<p>KBase protein MD5 id</p>
 
 </dd>
 <dt id="Definition">Definition</dt>
@@ -155,7 +157,7 @@ a string
 <dt id="Description3">Description</dt>
 <dd>
 
-<p>KBase protein MD5 id</p>
+<p>list of protein MD5s</p>
 
 </dd>
 <dt id="Definition1">Definition</dt>
@@ -177,7 +179,7 @@ a reference to a list where each element is a md5_id_t
 <dt id="Description4">Description</dt>
 <dd>
 
-<p>list of protein MD5s</p>
+<p>KBase feature id, ala &quot;kb|g.0.peg.781&quot;</p>
 
 </dd>
 <dt id="Definition2">Definition</dt>
@@ -199,7 +201,7 @@ a string
 <dt id="Description5">Description</dt>
 <dd>
 
-<p>KBase feature id, ala &quot;kb|g.0.peg.781&quot;</p>
+<p>list of feature ids</p>
 
 </dd>
 <dt id="Definition3">Definition</dt>
@@ -221,7 +223,7 @@ a reference to a list where each element is a feature_id_t
 <dt id="Description6">Description</dt>
 <dd>
 
-<p>Outputs from service</p>
+<p>PDB id</p>
 
 </dd>
 <dt id="Definition4">Definition</dt>
@@ -243,7 +245,7 @@ a string
 <dt id="Description7">Description</dt>
 <dd>
 
-<p>PDB id</p>
+<p>subchains of a match, i.e. &quot;(A,C,D)&quot;</p>
 
 </dd>
 <dt id="Definition5">Definition</dt>
@@ -265,7 +267,7 @@ a string
 <dt id="Description8">Description</dt>
 <dd>
 
-<p>subchains of a match, i.e. &quot;(A,C,D)&quot;</p>
+<p>1 (true) if exact match to pdb sequence</p>
 
 </dd>
 <dt id="Definition6">Definition</dt>
@@ -287,7 +289,7 @@ an int
 <dt id="Description9">Description</dt>
 <dd>
 
-<p>structural resolution (angstroms)</p>
+<p>% identity from BLASTP matches</p>
 
 </dd>
 <dt id="Definition7">Definition</dt>
@@ -309,7 +311,7 @@ a float
 <dt id="Description10">Description</dt>
 <dd>
 
-<p>% identity from BLASTP matches</p>
+<p>BLASTP alignment length</p>
 
 </dd>
 <dt id="Definition8">Definition</dt>
@@ -331,7 +333,7 @@ an int
 <dt id="Description11">Description</dt>
 <dd>
 
-<p>resolution_t resolution;</p>
+<p>returned data from match</p>
 
 </dd>
 <dt id="Definition9">Definition</dt>
@@ -354,6 +356,12 @@ align_length has a value which is an align_length_t</pre>
 
 <dl>
 
+<dt id="Description12">Description</dt>
+<dd>
+
+<p>list of match records</p>
+
+</dd>
 <dt id="Definition10">Definition</dt>
 <dd>
 
@@ -370,12 +378,6 @@ a reference to a list where each element is a PDBMatch
 
 <dl>
 
-<dt id="Description12">Description</dt>
-<dd>
-
-<p>list of the same</p>
-
-</dd>
 <dt id="Definition11">Definition</dt>
 <dd>
 

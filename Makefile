@@ -27,7 +27,7 @@ SCRIPTS_TESTS = $(wildcard t/script-tests/*.t)
 SERVER_TESTS = $(wildcard t/server-tests/*.t)
 
 SERVICE = KBaseProteinStructure
-$(SERVICE_DIR) ?= /kb/deployment/services/$(SERVICE)
+$(SERVICE_DIR) ?= $(TARGET)/services/$(SERVICE)
 PID_FILE = $(SERVICE_DIR)/service.pid
 ACCESS_LOG_FILE = $(SERVICE_DIR)/log/access.log
 ERR_LOG_FILE = $(SERVICE_DIR)/log/error.log
@@ -203,7 +203,7 @@ deploy-scripts:
 # when deploy-libs is called, the deploy-service target is
 # generally concerned with the service start and stop scripts.
 
-deploy-service: deploy-service-scripts deploy-service-pdb-data
+deploy-service: deploy-service-scripts deploy-service-pdb-data deploy-libs deploy-docs
 
 # Deploying docs here refers to the deployment of documentation
 # of the API. We'll include a description of deploying documentation

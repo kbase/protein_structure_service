@@ -8,10 +8,16 @@ class KBaseProteinStructure:
     KBaseProteinStructure
 
     Module Description:
-    KBaseProteinStructure.spec:  typedef compiler specification for protein 
-structure service
+    Module KBaseProteinStructure v0.1
+This service provides PDB structure ids which correspond to 
+KBase protein sequences.  In cases where there is exact match
+to a PDB sequence, close matches (via BLASTP) are reported.
 
-   Notes:  25 jun 2014 - removing resolution from the picture for now.
+There are two methods or function calls:
+  lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers
+  lookup_pdb_by_fid - accepts one or more feature ids (or CDS id)
+Both return a table of matches which include PDB id, 1 or 0 for
+exact match, percent identity and alignment length.
     '''
 
     ######## WARNING FOR GEVENT USERS #######

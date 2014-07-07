@@ -18,10 +18,16 @@ Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient
 =head1 DESCRIPTION
 
 
-KBaseProteinStructure.spec:  typedef compiler specification for protein 
-structure service
+Module KBaseProteinStructure v0.1
+This service provides PDB structure ids which correspond to 
+KBase protein sequences.  In cases where there is exact match
+to a PDB sequence, close matches (via BLASTP) are reported.
 
-   Notes:  25 jun 2014 - removing resolution from the picture for now.
+There are two methods or function calls:
+  lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers
+  lookup_pdb_by_fid - accepts one or more feature ids (or CDS id)
+Both return a table of matches which include PDB id, 1 or 0 for
+exact match, percent identity and alignment length.
 
 
 =cut
@@ -217,7 +223,7 @@ align_length_t is an int
 
 =item Description
 
-
+of each to a list of PDBMatch records
 
 =back
 
@@ -335,7 +341,7 @@ sub _validate_version {
 
 =item Description
 
-Inputs to services:
+KBase protein MD5 id
 
 
 =item Definition
@@ -366,7 +372,7 @@ a string
 
 =item Description
 
-KBase protein MD5 id
+list of protein MD5s
 
 
 =item Definition
@@ -397,7 +403,7 @@ a reference to a list where each element is a md5_id_t
 
 =item Description
 
-list of protein MD5s
+KBase feature id, ala "kb|g.0.peg.781"
 
 
 =item Definition
@@ -428,7 +434,7 @@ a string
 
 =item Description
 
-KBase feature id, ala "kb|g.0.peg.781"
+list of feature ids
 
 
 =item Definition
@@ -459,7 +465,7 @@ a reference to a list where each element is a feature_id_t
 
 =item Description
 
-Outputs from service
+PDB id
 
 
 =item Definition
@@ -490,7 +496,7 @@ a string
 
 =item Description
 
-PDB id
+subchains of a match, i.e. "(A,C,D)"
 
 
 =item Definition
@@ -521,7 +527,7 @@ a string
 
 =item Description
 
-subchains of a match, i.e. "(A,C,D)"
+1 (true) if exact match to pdb sequence
 
 
 =item Definition
@@ -552,7 +558,7 @@ an int
 
 =item Description
 
-structural resolution (angstroms)
+% identity from BLASTP matches
 
 
 =item Definition
@@ -583,7 +589,7 @@ a float
 
 =item Description
 
-% identity from BLASTP matches
+BLASTP alignment length
 
 
 =item Definition
@@ -614,7 +620,7 @@ an int
 
 =item Description
 
-resolution_t    resolution;
+returned data from match
 
 
 =item Definition
@@ -655,6 +661,11 @@ align_length has a value which is an align_length_t
 
 
 
+=item Description
+
+list of match records
+
+
 =item Definition
 
 =begin html
@@ -679,11 +690,6 @@ a reference to a list where each element is a PDBMatch
 
 =over 4
 
-
-
-=item Description
-
-list of the same
 
 
 =item Definition
