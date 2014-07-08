@@ -27,14 +27,9 @@ exact match, percent identity and alignment length.
 #BEGIN_HEADER
 
 # TODO:
-#   2) Error handling (and recovery?) for 
-#        a) all CMDI connections
-#        b) existence and readability of aux files
-#        c) existence and execution of blastp
-#        d) blast execution
-#   3) how to adjust or pass alternate percent id thresholds?
+#   1) how to adjust or pass alternate percent id thresholds?
 #       same for match length?
-#   4) scheme for setting a cutoff evalue for blastp?
+#   2) scheme for setting a cutoff evalue for blastp?
 #
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;

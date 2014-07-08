@@ -1,5 +1,6 @@
 *.p[ym].bak-[0-9]*
 *~
+*.tmp
 \#*#
 pdb/*.phr
 pdb/*.pin

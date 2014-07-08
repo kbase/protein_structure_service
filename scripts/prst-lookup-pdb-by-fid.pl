@@ -2,23 +2,39 @@
 use strict;
 use Data::Dumper;
 use Getopt::Long;
+use Pod::Usage;
+
 =head1 NAME
 
-prst-lookup-pdb-by-fid - find PDB structure matches by feature id
+prst-lookup-pdb-by-fid - find Protein Data Bank (PDB) structure ids whose protein sequences 
+match coding sequences of KBase sequences specified by feature (or CDS) ids.
 
 =head1 SYNOPSIS
 
-prst-lookup-pdb-by-fid [--url=http://kbase.us/services/ontology_service] [--domain_list=biological_process,molecular_function,cellular_component] [--evidence_code_list=IEA]  [--test_type=hypergeometric] < geneIDsList
+prst-lookup-pdb-by-fid [--url=http://kbase.us/services/protein_structure_service]  < geneIDsList
 
 =head1 DESCRIPTION
 
-Use this to determine any PDB sequences
+Use this to determine any PDB sequences matches to KBase coding sequence features.
 
 =head2 Documentation for underlying call
 
-    For a given list of kbase protein feature ids, look for exact matches in PDB sequences, or barring that, look for near matches with blastp.  Reports matches in order of sequence similarity and structure resolution.
+    For each in a given list of KBase protein feature ids, the service
+    first checks the PDB protein sequences for exact matches, using
+    MD5 keys, and if found, reports those.  If no exact matches are
+    found, a blastp search of the PDB sequences is conducted.
+    Currently, any hits with more than 70% identity with an alignment
+    length of %90 of the KBase sequence are reported.
 
-    TODO describe any optional parameters - similariy cutoffs, etc
+=head2 Output columns
+
+       pdb_id       - PDB identifier
+       chains       - if KBase sequence only matches some of the chains in the PDB entry, 
+                      those chains are reported.
+       exact        - 1 if exact match was found, 0 otherwise 
+       percent_id   - % identity of match
+       align_length - alignment length of match (aa)
+    
 
 =head1 OPTIONS
 
@@ -48,7 +64,7 @@ prints verbose output for debugging.
 
 =head1 VERSION
 
-0.1
+0.01
 
 =cut
 
@@ -62,7 +78,7 @@ my $usage = "Usage: $0 [--help --version] [--url=$service_url]  < fid_list \n";
 
 my $url        = $service_url;
 my $help       = '';
-my $version    = '';
+my $version    = '0.01';
 my $verbose    = '';
 
 GetOptions( "help"       => \$help,
@@ -99,8 +115,7 @@ if ( $verbose )
    }
 
 # print hits
-#my @fields = ( 'pdb_id', 'chains', 'resolution', 'exact', 'percent_id', 'align_len'  );
-my @fields = ( 'pdb_id', 'chains', 'exact', 'percent_id', 'align_len'  );
+my @fields = ( 'pdb_id', 'chains', 'exact', 'percent_id', 'align_length'  );
 
 foreach my $fid ( @input )
    {
@@ -121,34 +136,17 @@ print "program $0 ends.\n" if ( $verbose );
 
 sub  help_then_exit
    {
-    print <<EndOfDescription;
-    DESCRIPTION
-         For a given list of KBase MD5 protein ids, return PDB ids where the protein sequence is an exact or close match.
-EndOfDescription
-	print "$usage\n";
-	print "\n";
-	print "General options\n";
-    #print "\t--url=[http://kbase.us/services/ontology_service]\t\turl of the server\n";
-	print "\t--help\t\tprint help, then exit\n";
-	print "\t--version\t\tprint version, then exit\n";
-	print "\t--verbose\t\tverbose messages\n";
-	print "\n";
-	print "Examples: \n";
-	print "\n\n";
-    print "\techo f50a2d83cd0a3b1aa7b76ffcd4dedf40 | $0\n";
-	print "\n";
-	print "Report bugs to Sean McCorkle mccorkle\@bnl.gov\n";
-	exit(0);
+    pod2usage( -verbose => 2 );
+    exit(0);
    }
+
 
 sub  version_then_exit
    {
-	print "$0 version 0.1\n";
-	#print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
-	#print "This is free software: you are free to change and redistribute it.\n";
-	#print "There is NO WARRANTY, to the extent permitted by law.\n";
-	print "\n";
-	print "Programmer: Sean McCorkle\n";
-	exit(0);
+    print "$0 version $version\n";
+    #print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
+    #print "This is free software: you are free to change and redistribute it.\n";
+    #print "There is NO WARRANTY, to the extent permitted by law.\n";
+    print "\n";
+    print "Programmer: Sean McCorkle\n";
    }
-
