@@ -73,23 +73,24 @@ use Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient;
 #my $service_url = "http://kbase.us/services/protein_structure";
 #my $service_url = "http://localhost:7088";
 my $service_url = "http://140.221.85.122:7088";
+my $version    = '0.01';
 
 my $usage = "Usage: $0 [--help --version] [--url=$service_url]  < fid_list \n";
 
 my $url        = $service_url;
 my $help       = '';
-my $version    = '0.01';
+my $vers       = '';
 my $verbose    = '';
 
 GetOptions( "help"       => \$help,
-            "version"    => \$version,
+            "version"    => \$vers,
             "url=s"      => \$url,
             "verbose"    => \$verbose,
            ) or die $usage;
 
 if ( $help )
    { help_then_exit(); }
-elsif ( $version )
+elsif ( $vers )
    { version_then_exit(); }
 die $usage unless @ARGV == 0;
 

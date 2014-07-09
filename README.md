@@ -27,19 +27,29 @@ Log
 Special deployment instructions
 -------------------------------
 
-Makefile test order was rearranged to invoke test-service before
-test-client before test-scripts.  Otherwise standard KBase deployment
-and test should work.
+1) This service currently relies on a CDMI connection to Central Store to
+   convert MD5s to protein sequences and counts on a blastp binary to
+   find similar sequences.  The build (deploy) process starts with a
+   fasta-format file of sequences directly from the PDB, condenses that
+   to e set of unique sequences indexed by MD5 ids, and builds a blastp
+   index db from that, which resides in
+   /kb/deployment/services/KBaseProteinStructure/pdb/ along with other
+   auxilliary files (mapping PDB ids to sequence MD5s) Currently this
+   amounts to ~64 Mb of space
 
-This service currently relies on a CDMI connection to Central Store to
-convert MD5s to protein sequences and counts on a blastp binary to
-find similar sequences.  The build (deploy) process starts with a
-fasta-format file of sequences directly from the PDB, condenses that
-to e set of unique sequences indexed by MD5 ids, and builds a blastp
-index db from that, which resides in
-/kb/deployment/services/KBaseProteinStructure/pdb/ along with other
-auxilliary files (mapping PDB ids to sequence MD5s) Currently this
-amounts to ~64 Mb of space
+2) Since this service is not yet in production, I've left the client test 
+   URL as the testing/developement URL.  When in production, in the file
+   t/lib/prot_struct_test_utils.pm
+   will need to have this line 
+   our $service_url = "http://140.221.85.122:7088";
+   changed to the assigned production url
+
+3) Makefile test order was rearranged to invoke test-service before
+   test-client before test-scripts.  Otherwise standard KBase deployment
+   and test should work.   "test-service" checks make sure that the 
+   deployed pdb file environment is in place and a CMDI link to central 
+   store can be established.
+
 
 
 Starting/Stopping the service, and other notes
