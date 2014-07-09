@@ -26,7 +26,8 @@ CLIENT_TESTS = $(wildcard t/client-tests/*.t)
 SCRIPTS_TESTS = $(wildcard t/script-tests/*.t)
 SERVER_TESTS = $(wildcard t/server-tests/*.t)
 
-SERVICE = KBaseProteinStructure
+# de-camelized per instructions from Dan Murphy-Olson
+SERVICE = kbaseproteinstructure
 $(SERVICE_DIR) ?= $(TARGET)/services/$(SERVICE)
 PID_FILE = $(SERVICE_DIR)/service.pid
 ACCESS_LOG_FILE = $(SERVICE_DIR)/log/access.log
@@ -211,8 +212,9 @@ deploy-service: deploy-service-scripts deploy-service-pdb-data deploy-libs deplo
 # how to standardize and automate CLI documentation.
 
 deploy-docs: build-docs
-	-mkdir -p $(TARGET)/services/$(SERVICE_NAME)/webroot/.
-	cp docs/*.html $(TARGET)/services/$(SERVICE_NAME)/webroot/.
+
+	-mkdir -p $(TARGET)/services/$(SERVICE)/webroot/.
+	cp docs/*.html $(TARGET)/services/$(SERVICE)/webroot/.
 
 # The location of the Client.pm file depends on the --client param
 # that is provided to the compile_typespec command. The

@@ -5,7 +5,7 @@
 use strict;
 use Test::More;
 
-my $filedir = "/kb/deployment/services/KBaseProteinStructure/pdb";
+my $filedir = "/kb/deployment/services/kbaseproteinstructure/pdb";
 
 my @files = ( 'pdb_md5_prot.phr',  # BLASTP indices
               'pdb_md5_prot.psq',

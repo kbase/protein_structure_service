@@ -47,7 +47,6 @@ sub  load_md5_pdb_table
     # deploy.cfg!!!!
     #
 
-    #my $md5pdbfile = "/kb/deployment/services/KBaseProteinStructure/pdb/pdb.md5.tab";
     open( MDP, $self->{'md5pdbmapfile'}  ) || die "Can't open " . $self->{'md5pdbmapfile'} . "$!\n";
     $self->{'md5pdbtab'} = {};
     my $r = $self->{'md5pdbtab'};
@@ -146,7 +145,6 @@ sub  get_matches
     my $input_ids = shift;
     my $md5_seqs = shift;
 
-    #my $blastdb = "/kb/deployment/services/KBaseProteinStructure/pdb/pdb_md5_prot";
     my $blastdb = $self->{'blastdb'};
 
     my $results = {};                    # indexed by id (either md5 or fids)
@@ -253,8 +251,8 @@ sub new
     else
        {
         #print STDERR "no config file found: using built-in values\n";
-        $self->{'md5pdbmapfile'} = '/kb/deployment/services/KBaseProteinStructure/pdb/pdb.md5.tab';
-        $self->{'blastdb'} = "/kb/deployment/services/KBaseProteinStructure/pdb/pdb_md5_prot";
+        $self->{'md5pdbmapfile'} = '/kb/deployment/services/kbaseproteinstructure/pdb/pdb.md5.tab';
+        $self->{'blastdb'} = "/kb/deployment/services/kbaseproteinstructure/pdb/pdb_md5_prot";
        }
     
     # establish initial connection to central store.

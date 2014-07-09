@@ -33,7 +33,7 @@ Special deployment instructions
    fasta-format file of sequences directly from the PDB, condenses that
    to e set of unique sequences indexed by MD5 ids, and builds a blastp
    index db from that, which resides in
-   /kb/deployment/services/KBaseProteinStructure/pdb/ along with other
+   /kb/deployment/services/kbaseproteinstructure/pdb/ along with other
    auxilliary files (mapping PDB ids to sequence MD5s) Currently this
    amounts to ~64 Mb of space
 
