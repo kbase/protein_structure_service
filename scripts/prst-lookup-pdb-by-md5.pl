@@ -11,7 +11,7 @@ match coding sequences of KBase sequences specified by MD5 hash codes.
 
 =head1 SYNOPSIS
 
-prst-lookup-pdb-by-md5 [--url=http://kbase.us/services/protein_structure_service]  < MD5_List
+prst-lookup-pdb-by-md5 [--url=http://kbase.us/services/kbaseproteinstructure]  < MD5_List
 
 =head1 DESCRIPTION
 
@@ -41,7 +41,7 @@ Use this to determine any PDB sequences matches to KBase coding sequence feature
 
 =over 6
 
-=item B<-u> I<[http://kbase.us/services/protein_structure_service]> B<--url>=I<[http://kbase.us/services/protein_structure_service]>
+=item B<-u> I<[http://kbase.us/services/kbaseproteinstructure]> B<--url>=I<[http://kbase.us/services/kbaseproteinstructure]>
 url of the server
 
 =item B<-h> B<--help>
@@ -71,9 +71,9 @@ prints verbose output for debugging.
 
 use Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient;
 
-#my $service_url = "http://kbase.us/services/protein_structure";
+my $service_url = "http://kbase.us/services/kbaseproteinstructure";
 #my $service_url = "http://localhost:7088";
-my $service_url = "http://140.221.85.122:7088";
+#my $service_url = "http://140.221.85.122:7088";
 my $version = "0.01";
 
 my $usage = "Usage: $0 [--help --version] [--url=$service_url]  < MD5_list \n";

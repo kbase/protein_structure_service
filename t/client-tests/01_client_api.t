@@ -8,7 +8,6 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use prot_struct_test_utils;
 
-#my $url = "http://140.221.85.122:7088";
 
 print "$0 begins.\n";
 print "url is [$service_url]\n";

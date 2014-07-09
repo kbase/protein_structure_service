@@ -10,7 +10,9 @@ $VERSION = 0.1;
 @EXPORT = qw( check_matches_structure check_md5_data_struct check_fid_data_struct
               check_md5_examples check_fid_examples $service_url );
 
-our $service_url = "http://140.221.85.122:7088";
+#our $service_url = "http://140.221.85.122:7088";
+#our $service_url = "http://localhost:7088";
+our $service_url = "http://kbase.us/services/kbaseproteinstructure";
 
 sub  check_matches_structure
    {

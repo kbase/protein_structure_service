@@ -17,11 +17,9 @@ my $bin  = "scripts";
 print "$0 starts.\n";
 print "service_url is [$service_url]\n";
 
-my $t = Test::Cmd->new( #prog        => 'scripts/$prog.pl', 
-                        prog        => "../../scripts/$prog.pl",
+my $t = Test::Cmd->new( prog        => 'scripts/$prog.pl', 
                         workdir     => '', 
-                        #interpreter => '/kb/runtime/bin/perl'
-                        interpreter => '/Applications/KBase.app/runtime/bin/perl'
+                        interpreter => '/kb/runtime/bin/perl'
                       );
 ok( $t, "creating Test::Cmd object for fid test" );
 
