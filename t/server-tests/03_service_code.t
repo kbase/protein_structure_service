@@ -11,11 +11,19 @@ use prot_struct_test_utils;
 
 print "$0 begins.\n";
 
+#
+# There's a problem here, not sure how to handle.  This really should have
+# the environment variable $KB_DEPLOYMENT_CONFIG set to point to the deploy.cfg
+# file beforehand.  If the environment variable isn't set, the Impl module code 
+# currently defaults to looking in a hard-coded directory name for the pdb auxiliary 
+# files, but thats kind of ugly.  
+#
 my $pss = Bio::KBase::KBaseProteinStructure::KBaseProteinStructureImpl->new();
 
 ok( defined( $pss ), "KBaseProteinStructureImpl constructor returned non-null" );
 
-isa_ok( $pss, "Bio::KBase::KBaseProteinStructure::KBaseProteinStructureImpl", "got a KBaseProteinStructureImpl object" );
+isa_ok( $pss, "Bio::KBase::KBaseProteinStructure::KBaseProteinStructureImpl", 
+              "got a KBaseProteinStructureImpl object" );
 
 can_ok( $pss, ( 'lookup_pdb_by_md5', 'lookup_pdb_by_fid' ) );
 

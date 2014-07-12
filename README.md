@@ -34,33 +34,32 @@ Special deployment instructions
    fasta-format file of sequences directly from the PDB, condenses that
    to a set of unique sequences indexed by MD5 ids, and builds a blastp
    index db from that, which resides in
-   /kb/deployment/services/kbaseproteinstructure/pdb/ along with other
+   /kb/deployment/services/protein_structure_service/pdb/ along with other
    auxilliary files (mapping PDB ids to sequence MD5s) Currently this
    amounts to ~64 Mb of space
 
 
 2) The  makefile test order was rearranged to invoke test-service before
-   test-client before test-scripts.  The authors preference is to 
-   "make deploy" and then make test-service before starting the service,
-   and then running test-client after the service is running.
+   test-client before test-scripts.  The author's preference is to 
+   "make deploy" and then "make test-service" before starting the service,
+   then start the service and then "make test-client". 
    ("test-service" checks make sure that the deployed pdb file environment 
    is in place and a CMDI link to central store can be established.)
    Otherwise standard KBase deployment and test should work.   
 
 
-
 Starting/Stopping the service, and other notes
 ----------------------------------------------
 * to start and stop the service, use the 'start_service' and 'stop_service'
-  scripts in (the default location) /kb/deployment/services/KBaseProteinStructure
-* check /kb/deployment/services/KBaseProteinStructure/log/error.log to see if there 
+  scripts in (the default location) /kb/deployment/services/protein_structure_service
+* check /kb/deployment/services/protein_structure_service/log/error.log to see if there 
   were any errors  (one information message "LOADED MD5 PDB TABLE  two" has been 
   left in)
 * on test machines, KBaseProteinStructure services listen on port 7088, 
   so this port must be open
 * after starting the service, the process id of the service is stored in the 
-  'service.pid' file in /kb/deployment/services/kbaseproteinptructure
-* log files are currently dumped in the /kb/deployment/services/kbaseproteinstructure/log
+  'service.pid' file in /kb/deployment/services/protein_structure_service
+* log files are currently dumped in the /kb/deployment/services/protein_structure_service/log
   directory
 * 'reboot_service' speeds the process of stopping, redeploying and restarting a service
   for the purposes of debugging and testing.

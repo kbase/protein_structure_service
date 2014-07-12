@@ -1,12 +1,12 @@
 #!/bin/sh
-echo starting kbaseproteinstructure service.
+echo starting protein_structure_service service.
 export PERL5LIB=$PERL5LIB:/kb/deployment/lib
 export KB_DEPLOYMENT_CONFIG=/kb/dev_container/modules/protein_structure_service/deploy.cfg
 export KB_SERVICE_NAME=KBaseProteinStructure
 #uncomment to debug: export STARMAN_DEBUG=1
-/kb/runtime/bin/starman --listen :7088 --pid /kb/deployment/services/kbaseproteinstructure/service.pid --daemonize \
-  --access-log /kb/deployment/services/kbaseproteinstructure/log/access.log \
-  --error-log /kb/deployment/services/kbaseproteinstructure/log/error.log \
+/kb/runtime/bin/starman --listen :7088 --pid /kb/deployment/services/protein_structure_service/service.pid --daemonize \
+  --access-log /kb/deployment/services/protein_structure_service/log/access.log \
+  --error-log /kb/deployment/services/protein_structure_service/log/error.log \
   /kb/deployment/lib/KBaseProteinStructure.psgi
-echo kbaseproteinstructure service is listening on port 7088.
+echo protein_structure_service service is listening on port 7088.
 

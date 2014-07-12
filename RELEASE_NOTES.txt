@@ -14,7 +14,7 @@ NEW FEATURES:
 -The first internal release.  All methods are new.
 
 UPDATED FEATURES / MAJOR BUG FIXES:
--none.
+-none so far.
 
 ANTICIPATED FUTURE DEVELOPMENTS:
 -public release of the service

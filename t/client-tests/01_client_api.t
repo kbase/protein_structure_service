@@ -10,8 +10,10 @@ use prot_struct_test_utils;
 
 
 print "$0 begins.\n";
+#my $url = "http://140.221.85.122:7088";
+my $url = $service_url;
 print "url is [$service_url]\n";
-my $psc = Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient->new( $service_url );
+my $psc = Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient->new( $url );
 
 ok( defined( $psc ), "Got something" );
 

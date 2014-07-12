@@ -26,8 +26,9 @@ CLIENT_TESTS = $(wildcard t/client-tests/*.t)
 SCRIPTS_TESTS = $(wildcard t/script-tests/*.t)
 SERVER_TESTS = $(wildcard t/server-tests/*.t)
 
-# de-camelized per instructions from Dan Murphy-Olson
-SERVICE = kbaseproteinstructure
+# changed deployment dir from decamilized service name
+# to match repo name per request from Tom Brettin 
+SERVICE = protein_structure_service
 $(SERVICE_DIR) ?= $(TARGET)/services/$(SERVICE)
 PID_FILE = $(SERVICE_DIR)/service.pid
 ACCESS_LOG_FILE = $(SERVICE_DIR)/log/access.log

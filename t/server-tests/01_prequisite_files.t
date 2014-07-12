@@ -4,8 +4,11 @@
 
 use strict;
 use Test::More;
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use prot_struct_test_utils;
 
-my $filedir = "/kb/deployment/services/kbaseproteinstructure/pdb";
+my $filedir = "$deploy_dir/pdb";
 
 my @files = ( 'pdb_md5_prot.phr',  # BLASTP indices
               'pdb_md5_prot.psq',

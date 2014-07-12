@@ -251,8 +251,8 @@ sub new
     else
        {
         #print STDERR "no config file found: using built-in values\n";
-        $self->{'md5pdbmapfile'} = '/kb/deployment/services/kbaseproteinstructure/pdb/pdb.md5.tab';
-        $self->{'blastdb'} = "/kb/deployment/services/kbaseproteinstructure/pdb/pdb_md5_prot";
+        $self->{'md5pdbmapfile'} = '/kb/deployment/services/protein_structure_service/pdb/pdb.md5.tab';
+        $self->{'blastdb'} = "/kb/deployment/services/protein_structure_service/pdb/pdb_md5_prot";
        }
     
     # establish initial connection to central store.

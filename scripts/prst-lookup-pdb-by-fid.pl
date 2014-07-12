@@ -11,7 +11,7 @@ match coding sequences of KBase sequences specified by feature (or CDS) ids.
 
 =head1 SYNOPSIS
 
-prst-lookup-pdb-by-fid [--url=http://kbase.us/services/kbaseproteinstructure]  < geneIDsList
+prst-lookup-pdb-by-fid [--url=http://kbase.us/services/protein_structure_service]  < geneIDsList
 
 =head1 DESCRIPTION
 
@@ -40,7 +40,7 @@ Use this to determine any PDB sequences matches to KBase coding sequence feature
 
 =over 6
 
-=item B<-u> I<[http://kbase.us/services/kbaseproteinstructure]> B<--url>=I<[http://kbase.us/services/kbaseproteinstructure]>
+=item B<-u> I<[http://kbase.us/services/protein_structure_service]> B<--url>=I<[http://kbase.us/services/protein_structure_service]>
 url of the server
 
 =item B<-h> B<--help>
@@ -70,7 +70,7 @@ prints verbose output for debugging.
 
 use Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient;
 
-my $service_url = "http://kbase.us/services/kbaseproteinstructure";
+my $service_url = "http://kbase.us/services/protein_structure_service";
 #my $service_url = "http://localhost:7088";
 #my $service_url = "http://140.221.85.122:7088";
 my $version    = '0.01';

@@ -1,8 +1,8 @@
 #!/bin/sh
-echo trying to stop kbaseproteinstructure service.
-pid_file=/kb/deployment/services/kbaseproteinstructure/service.pid
+echo trying to stop protein_structure_service service.
+pid_file=/kb/deployment/services/protein_structure_service/service.pid
 if [ ! -f $pid_file ] ; then 
-	echo "No pid file: $pid_file found for service kbaseproteinstructure."
+	echo "No pid file: $pid_file found for service protein_structure_service."
 	exit 1
 fi
 pid=$(cat $pid_file)
