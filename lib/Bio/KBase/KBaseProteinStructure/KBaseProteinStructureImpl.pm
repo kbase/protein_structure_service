@@ -11,7 +11,7 @@ KBaseProteinStructure
 
 =head1 DESCRIPTION
 
-Module KBaseProteinStructure v0.1
+Module KBaseProteinStructure v0.2
 This service provides PDB structure ids which correspond to 
 KBase protein sequences.  In cases where there is exact match
 to a PDB sequence, close matches (via BLASTP) are reported.
@@ -26,15 +26,17 @@ exact match, percent identity and alignment length.
 
 #BEGIN_HEADER
 
-# TODO:
-#   1) how to adjust or pass alternate percent id thresholds?
-#       same for match length?
-#   2) scheme for setting a cutoff evalue for blastp?
-#
 use Bio::KBase::CDMI::CDMIClient;
 use Bio::KBase::Utilities::ScriptThing;
 use Data::Dumper;
 use Config::Simple;
+
+# TODO:
+#   1) how to adjust or pass alternate percent id thresholds?
+#       same for match length?
+#   2) scheme for setting a cutoff evalue for blastp?
+
+
 
 # this creates a MD5-indexed hash table connecting the unique protein sequence MD5
 # to a list reference of pdb IDs coupled with chain ids (in cases where there are 
@@ -146,6 +148,8 @@ sub  get_matches
     my $md5_seqs = shift;
 
     my $blastdb = $self->{'blastdb'};
+    my $percent_id_threshold = 30.0;
+    my $align_len_threshold =  80.0;
 
     my $results = {};                    # indexed by id (either md5 or fids)
     foreach my $id ( @{$input_ids} )     # for each input id
@@ -172,7 +176,7 @@ sub  get_matches
         else                                                         # no exact match, so try a blast search
            {
             my $seqfile = "/tmp/kbsl$$.fasta";                       # put the sequence into a tmp fasta
-                open( TMPSEQ, ">$seqfile" ) || die "Can't write to $seqfile: $!\n";
+            open( TMPSEQ, ">$seqfile" ) || die "Can't write to $seqfile: $!\n";
             print TMPSEQ ">$md5\n";
             print TMPSEQ $protseq, "\n";
             #
@@ -185,7 +189,10 @@ sub  get_matches
 	       {
                 next if ( /^#/ );                                   # TODO maybe check for header here?
                 my ($seqid, $pdb_md5_id, $percent_id, $alen) = split( /\s+/ );
-                if ( $percent_id >= 70.0 && (100.0 * $alen / $seqlength ) > 90.0 )
+
+                if (    $percent_id >= $percent_id_threshold 
+                     && (100.0 * $alen / $seqlength ) > $align_len_threshold
+                   )
                    {
                     my $hits = $self->{'md5pdbtab'}->{$pdb_md5_id};
                     if ( $hits )

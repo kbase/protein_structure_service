@@ -23,8 +23,8 @@ Use this to determine any PDB sequences matches to KBase coding sequence feature
     first checks the PDB protein sequences for exact matches, using
     MD5 keys, and if found, reports those.  If no exact matches are
     found, a blastp search of the PDB sequences is conducted.
-    Currently, any hits with more than 70% identity with an alignment
-    length of %90 of the KBase sequence are reported.
+    Currently, any hits with more than 30% identity with an alignment
+    length of %80 of the KBase sequence are reported.
 
 =head2 Output columns
 
@@ -72,7 +72,7 @@ use Bio::KBase::KBaseProteinStructure::KBaseProteinStructureClient;
 
 my $service_url = "http://kbase.us/services/protein_structure_service";
 #my $service_url = "http://localhost:7088";
-#my $service_url = "http://140.221.85.122:7088";
+#my $service_url = "http://140.221.67.170:7088";
 my $version    = '0.01';
 
 my $usage = "Usage: $0 [--help --version] [--url=$service_url]  < fid_list \n";

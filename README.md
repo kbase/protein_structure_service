@@ -23,7 +23,7 @@ Sean McCorkle BNL (mccorkle@bnl.gov, sean.r.mccorkle@gmail.com)
 Log
 ---
 0.01 - Initial Release candidate 
-
+0.02 - Broader Match Criteria - now only 30% identity over 80% length required
 
 Special deployment instructions
 -------------------------------

@@ -117,7 +117,14 @@ my $md5_example1 = {
                                                     'exact' => 0,
                                                     'align_length' => 418,
                                                     'chains' => ''
-                                                  }
+                                                  },
+                                                  {
+                                                    'percent_id' => '54.48',
+                                                    'pdb_id' => '3l0o',
+                                                    'exact' => 0,
+                                                    'align_length' => 413,
+                                                    'chains' => ''
+	      }
                                                 ]
         };
 
@@ -141,132 +148,35 @@ my $md5_example2 = {
         };
 
 my $fid_example1 = {
-          'kb|g.0.peg.424' => [
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '3o4v',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '3df9',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '1nc3',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '1y6r',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '1z5p',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '1nc1',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '1jys',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => 100,
-                                  'pdb_id' => '1y6q',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '99.57',
-                                  'pdb_id' => '1z5n',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '99.57',
-                                  'pdb_id' => '1z5o',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '95.69',
-                                  'pdb_id' => '4f3c',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '95.69',
-                                  'pdb_id' => '4f2w',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '95.69',
-                                  'pdb_id' => '4f3k',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '95.69',
-                                  'pdb_id' => '4f2p',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '95.69',
-                                  'pdb_id' => '4f1w',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                },
-                                {
-                                  'percent_id' => '90.09',
-                                  'pdb_id' => '4g89',
-                                  'exact' => 0,
-                                  'align_length' => 232,
-                                  'chains' => ''
-                                }
-                              ]
+          'kb|g.0.peg.2909' => [
+                                 {
+                                   'percent_id' => 100,
+                                   'pdb_id' => '1cs0',
+                                   'exact' => 1,
+                                   'align_length' => 382,
+                                   'chains' => '(B,D,F,H)'
+                                 },
+                                 {
+                                   'percent_id' => 100,
+                                   'pdb_id' => '1kee',
+                                   'exact' => 1,
+                                   'align_length' => 382,
+                                   'chains' => '(B,D,F,H)'
+                                  }
+                               ]
+
         };
 
 my $fid_example2 = {
-          'kb|g.0.peg.2350' => [
-                                 {
-                                   'percent_id' => 100,
-                                   'pdb_id' => '4iot',
-                                   'exact' => 1,
-                                   'align_length' => 255,
-                                   'chains' => ''
-                                 }
-                               ]
+          'kb|g.216.peg.2666' => [
+                                   {
+                                     'percent_id' => '50.11',
+                                     'pdb_id' => '3hsi',
+                                     'exact' => 0,
+                                     'align_length' => 451,
+                                     'chains' => ''
+                                   }
+                                 ]
         };
 
 sub  check_md5_examples

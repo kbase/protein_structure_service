@@ -37,7 +37,9 @@ my @expected = (
 "f50a2d83cd0a3b1aa7b76ffcd4dedf40	1xpr		0	86.36	418\n",
 "f50a2d83cd0a3b1aa7b76ffcd4dedf40	1pv4		0	86.36	418\n",
 "f50a2d83cd0a3b1aa7b76ffcd4dedf40	1xpo		0	86.36	418\n",
-"f50a2d83cd0a3b1aa7b76ffcd4dedf40	3ice		0	86.36	418\n" );
+"f50a2d83cd0a3b1aa7b76ffcd4dedf40	3ice		0	86.36	418\n",
+"f50a2d83cd0a3b1aa7b76ffcd4dedf40	3l0o		0	54.48	413\n"
+ );
 
 is_deeply( \@output, \@expected, "output checks" );
 print @output;
@@ -51,7 +53,14 @@ print $t->stderr;
 my @output = $t->stdout;
 my @expected = (
 "55cf059bb4bc9d3e3ecdae6e3ab0fac2	3s5w		0	100	234\n",
-"55cf059bb4bc9d3e3ecdae6e3ab0fac2	3s61		0	100	234\n"
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	3s61		0	100	234\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b67		0	40.74	243\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b66		0	40.74	243\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b69		0	40.74	243\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b63		0	40.74	243\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b65		0	40.74	243\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b64		0	40.74	243\n",
+"55cf059bb4bc9d3e3ecdae6e3ab0fac2	4b68		0	40.74	243\n"
 );
 is_deeply( \@output, \@expected, "output checks" );
 print @output;

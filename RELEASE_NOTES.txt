@@ -6,7 +6,9 @@ protein sequence, specified by either a MD5 id or a feature or coding
 sequence id.  Deployment documentation is in README.md in this
 directory.
 
-
+Version 0.02
+-------------------------------------------
+Lowered blastp match threshold to 30% identity over 80% alignment length
 
 Version 0.01 (GIT commit on 3/12/2013)
 -------------------------------------------
