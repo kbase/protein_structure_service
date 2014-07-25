@@ -17,7 +17,7 @@ my $bin  = "scripts";
 print "$0 starts.\n";
 print "service_url is [$service_url]\n";
 
-my $t = Test::Cmd->new( prog        => 'scripts/$prog.pl', 
+my $t = Test::Cmd->new( prog        => "scripts/$prog.pl", 
                         workdir     => '', 
                         interpreter => '/kb/runtime/bin/perl'
                       );
