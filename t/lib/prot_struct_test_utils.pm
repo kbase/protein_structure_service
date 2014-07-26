@@ -17,7 +17,7 @@ $VERSION = 0.1;
 
 #our $service_url = "http://140.221.85.122:7088";
 #our $service_url = "http://localhost:7088";
-our $service_url = "http://kbase.us/services/protein_structure_service";
+our $service_url = "https://kbase.us/services/protein_structure_service";
 our $deploy_dir = "/kb/deployment/services/protein_structure_service";
 
 sub  check_matches_structure

@@ -16,6 +16,7 @@ my $bin  = "scripts";
 
 print "$0 starts.\n";
 print "service_url is [$service_url]\n";
+#$service_url = "http://140.221.67.170:7088";
 
 my $t = Test::Cmd->new( prog        => "scripts/$prog.pl", 
                         workdir     => '', 
