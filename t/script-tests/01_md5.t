@@ -1,30 +1,52 @@
 #
 # test prst-lookup-pdb-by-md5.pl using Test::Cmd
 #
-
+#  usage:  perl 01_md5.t   [--perl_interp=/kb/runtime/bin/perl]
+#                          [--url=https://kbase.us/services/protein_structure_service]
+#                          [--bindir=scripts]
+#                          [--help]
+#
 use strict;
 use Test::More;
 use Test::Cmd;
+use Getopt::Long;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use prot_struct_test_utils;     # defines $service_url
 
 my $prog='prst-lookup-pdb-by-md5';
 
+my $usage_msg="usage:  perl 01_md5.t   [--perl_interp=/kb/runtime/bin/perl]\n" .
+              "                        [--url=https://kbase.us/services/protein_structure_service]\n" .
+              "                        [--bindir=scripts]\n" .
+              "                        [--help]\n";
 
-my $bin  = "scripts";
+my $perl_interp = '/kb/runtime/bin/perl';
+my $url         = $service_url;
+my $bindir      = "scripts";
+my $help        = "";
+GetOptions( "perl_interp=s" => \$perl_interp,
+            "url=s"         => \$url,
+            "bindir=s"      => \$bindir,
+            "help"          => \$help
+          ) || die $usage_msg;
+
+if ( $help )
+   {
+    print $usage_msg;
+    exit;
+   }
 
 print "$0 starts.\n";
-print "service_url is [$service_url]\n";
-#$service_url = "http://140.221.67.170:7088";
+print "url is [$url]\n";
 
-my $t = Test::Cmd->new( prog        => "scripts/$prog.pl", 
+my $t = Test::Cmd->new( prog        => "$bindir/$prog.pl", 
                         workdir     => '', 
-                        interpreter => '/kb/runtime/bin/perl'
+                        interpreter => $perl_interp
                       );
 ok( $t, "creating Test::Cmd object for md5 test" );
 
-$t->run( args => "--url=$service_url", stdin => <<EndOfInput );
+$t->run( args => "--url=$url", stdin => <<EndOfInput );
 f50a2d83cd0a3b1aa7b76ffcd4dedf40
 EndOfInput
 
@@ -45,7 +67,7 @@ my @expected = (
 is_deeply( \@output, \@expected, "output checks" );
 print @output;
 
-$t->run( args => "--url=$service_url", stdin => <<EndOfInput );
+$t->run( args => "--url=$url", stdin => <<EndOfInput );
 55cf059bb4bc9d3e3ecdae6e3ab0fac2
 EndOfInput
 
