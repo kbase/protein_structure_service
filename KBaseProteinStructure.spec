@@ -3,11 +3,18 @@
    KBase protein sequences.  In cases where there is exact match
    to a PDB sequence, close matches (via BLASTP) are reported.
 
-   There are two methods or function calls:
+   There are three methods or function calls:
      lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers
      lookup_pdb_by_fid - accepts one or more feature ids (or CDS id)
-   Both return a table of matches which include PDB id, 1 or 0 for
-   exact match, percent identity and alignment length.    
+     lookup_pdb_by_seq - accepts one or more protein (aa) sequences
+
+     all return a table of matches which include PDB id, 1 or 0 for
+     exact match, percent identity and alignment length.  
+     lookup_pdb_by_md5 and lookup_pdb_by_seq include the sequence MD5
+     identifier as the first column, lookup_pdb_by_seq includes the
+     feature (CDS) id.  
+     
+     TODO: add option for protein sequence to be included
 */
 
 module KBaseProteinStructure { 
@@ -24,6 +31,12 @@ module KBaseProteinStructure {
 
     /* list of feature ids */
     typedef list<feature_id_t> feature_ids_t;
+
+    /* protein sequence */
+    typedef string protein_seq_t;
+
+    /* list of protein sequences */
+    typedef list<protein_seq_t> protein_seqs_t;
 
     /* PDB id */	
     typedef string  pdb_id_t;
@@ -55,6 +68,8 @@ module KBaseProteinStructure {
     typedef mapping<md5_id_t,PDBMatches> md5_to_pdb_matches;
 
     typedef mapping<feature_id_t,PDBMatches> fid_to_pdb_matches;
+
+    typedef mapping<protein_seq_t,PDBMatches> seq_to_pdb_matches;
  
     /*FUNCTIONS*/
     
@@ -62,7 +77,11 @@ module KBaseProteinStructure {
     /* of each to a list of PDBMatch records */
     funcdef lookup_pdb_by_md5( md5_ids_t input_ids ) returns( md5_to_pdb_matches results);
 
-    /* primary function - accepts a list of protein MD5s.  returns a hash (mapping?)  */
+    /* primary function - accepts a list of protein MD5s.  returns a hash  */
     /* of each to a list of PDBMatch records */
     funcdef lookup_pdb_by_fid( feature_ids_t feature_ids ) returns( fid_to_pdb_matches results );
+
+    /* primary function - accepts a list of protein sequences.  returns a hash */
+    /* of each to a list of PDBMatch records */
+    funcdef lookup_pdb_by_seq( protein_seqs_t protein_seqs ) returns( seq_to_pdb_matches results);
 }; 
