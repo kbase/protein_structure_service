@@ -4,6 +4,7 @@ use strict;
 use Test::More;
 use Exporter;
 use vars qw( $VERSION  @ISA @EXPORT );
+use Digest::MD5   qw( md5 md5_hex md5_base64 );
 
 $VERSION = 0.1;
 @ISA = qw( Exporter );
@@ -12,6 +13,7 @@ $VERSION = 0.1;
               check_fid_data_struct
               check_md5_examples
               check_fid_examples
+              check_seq_examples
               $service_url
               $deploy_dir );
 
@@ -179,19 +181,51 @@ my $fid_example2 = {
                                  ]
         };
 
+my $seq_example1 = {
+          'MIKSALLVLEDGTQFHGRAIGATGSAVGEVVFNTSMTGYQEILTDPSYSRQIVTLTYPHIGNVGTNDADEESSQVHAQGLVIRDLPLIASNFRNTEDLSSYLKRHNIVAIADIDTRKLTRLLREKGAQNGCIIAGDNPDAALALEKARAFPGLNGMDLAKEVTTAEAYSWTQGSWTLTGGLPEAKKEDELPFHVVAYDFGAKRNILRMLVDRGCRLTIVPAQTSAEDVLKMNPDGIFLSNGPGDPAPCDYAITAIQKFLETDIPVFGICLGHQLLALASGAKTVKMKFGHHGGNHPVKDVEKNVVMITAQNHGFAVDEATLPANLRVTHKSLFDGTLQGIHRTDKPAFSFQGHPEASPGPHDAAPLFDHFIELIEQYRKTAK'
+                           => [
+                                 {
+                                   'percent_id' => 100,
+                                   'pdb_id' => '1cs0',
+                                   'exact' => 1,
+                                   'align_length' => 382,
+                                   'chains' => '(B,D,F,H)'
+                                 },
+                                 {
+                                   'percent_id' => 100,
+                                   'pdb_id' => '1kee',
+                                   'exact' => 1,
+                                   'align_length' => 382,
+                                   'chains' => '(B,D,F,H)'
+                                  }
+                               ]
+
+        };
+
+my $seq_example2 = {
+          'MLSKFKRNKHQQHLAQLPKISQSVDDVDFFYAPADFRETLLEKIASAKQRICIVALYLEQDDGGKGILNALYEAKRQRPELDVRVLVDWHRAQRGRIGAAASNTNADWYCRMAQENPGVDVPVYGVPINTREALGVLHFKGFIIDDSVLYSGASLNDVYLHQHDKYRYDRYHLIRNRKMSDIMFEWVTQNIMNGRGVNRLDDVNRPKSPEIKNDIRLFRQELRDAAYHFQGDADNDQLSVTPLVGLGKSSLLNKTIFHLMPCAEQKLTICTPYFNLPAILVRNIIQLLREGKKVEIIVGDKTANDFYIPEDEPFKIIGALPYLYEINLRRFLSRLQYYVNTDQLVVRLWKDDDNTYHLKGMWVDDKWMLITGNNLNPRAWRLDLENAILIHDPQLELAPQREKELELIRERTTIVKHYRDLQSIADYPVKVRKLIRRLRRIRIDRLISRIL'
+                              => [
+                                   {
+                                     'percent_id' => '50.11',
+                                     'pdb_id' => '3hsi',
+                                     'exact' => 0,
+                                     'align_length' => 451,
+                                     'chains' => ''
+                                   }
+                                 ]
+        };
+
 sub  check_md5_examples
    {
     my $pss = shift;
 
-    foreach my $m ( keys( %{$md5_example1} ) )
+    foreach my $md5_example ( ($md5_example1, $md5_example2) )
        {
-        my $mat = $pss->lookup_pdb_by_md5( [ $m ] );
-        is_deeply( $mat, $md5_example1, "is deeply $m" );
-       }
-    foreach my $m ( keys( %{$md5_example2} ) )
-       {
-        my $mat = $pss->lookup_pdb_by_md5( [ $m ] );
-        is_deeply( $mat, $md5_example2, "is deeply $m" );
+        foreach my $m ( keys( %{$md5_example} ) )
+           {
+            my $mat = $pss->lookup_pdb_by_md5( [ $m ] );
+            is_deeply( $mat, $md5_example, "is deeply $m" );
+           }
        }
    }
 
@@ -199,15 +233,31 @@ sub  check_fid_examples
    {
     my $pss = shift;
 
-    foreach my $f ( keys( %{$fid_example1} ) )
+    foreach my $fid_example ( ($fid_example1, $fid_example2) )
        {
-        my $mat = $pss->lookup_pdb_by_fid( [ $f ] );
-        is_deeply( $mat, $fid_example1, "is deeply $f" );
+        foreach my $f ( keys( %{$fid_example} ) )
+           {
+            my $mat = $pss->lookup_pdb_by_fid( [ $f ] );
+            is_deeply( $mat, $fid_example, "is deeply $f" );
+           }
        }
-    foreach my $f ( keys( %{$fid_example2} ) )
+   }
+
+sub  check_seq_examples
+   {
+    my $pss = shift;
+
+    foreach my $seq_example ( ($seq_example1, $seq_example2) )
        {
-        my $mat = $pss->lookup_pdb_by_fid( [ $f ] );
-        is_deeply( $mat, $fid_example2, "is deeply $f" );
+        foreach my $f ( keys( %{$seq_example} ) )
+           {
+            my $mat = $pss->lookup_pdb_by_seq( [ $f ] );
+            foreach my $m ( keys( %{$mat} ) )
+               {
+                is( $m, md5_hex( $f ), "md5 match for aa seq" );
+                is_deeply( $mat->{$m}, $seq_example->{$f}, "is deeply $m $f" );
+               }
+           }
        }
    }
 

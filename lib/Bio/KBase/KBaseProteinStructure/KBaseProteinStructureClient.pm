@@ -23,11 +23,18 @@ This service provides PDB structure ids which correspond to
 KBase protein sequences.  In cases where there is exact match
 to a PDB sequence, close matches (via BLASTP) are reported.
 
-There are two methods or function calls:
+There are three methods or function calls:
   lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers
   lookup_pdb_by_fid - accepts one or more feature ids (or CDS id)
-Both return a table of matches which include PDB id, 1 or 0 for
-exact match, percent identity and alignment length.
+  lookup_pdb_by_seq - accepts one or more protein (aa) sequences
+
+  all return a table of matches which include PDB id, 1 or 0 for
+  exact match, percent identity and alignment length.  
+  lookup_pdb_by_md5 and lookup_pdb_by_seq include the sequence MD5
+  identifier as the first column, lookup_pdb_by_seq includes the
+  feature (CDS) id.  
+  
+  TODO: add option for protein sequence to be included
 
 
 =cut
@@ -276,6 +283,117 @@ sub lookup_pdb_by_fid
 
 
 
+=head2 lookup_pdb_by_seq
+
+  $results = $obj->lookup_pdb_by_seq($protein_seqs)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$protein_seqs is a protein_seqs_t
+$results is a seq_to_pdb_matches
+protein_seqs_t is a reference to a list where each element is a protein_seq_t
+protein_seq_t is a string
+seq_to_pdb_matches is a reference to a hash where the key is a protein_seq_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$protein_seqs is a protein_seqs_t
+$results is a seq_to_pdb_matches
+protein_seqs_t is a reference to a list where each element is a protein_seq_t
+protein_seq_t is a string
+seq_to_pdb_matches is a reference to a hash where the key is a protein_seq_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int
+
+
+=end text
+
+=item Description
+
+of each to a list of PDBMatch records
+
+=back
+
+=cut
+
+sub lookup_pdb_by_seq
+{
+    my($self, @args) = @_;
+
+# Authentication: none
+
+    if ((my $n = @args) != 1)
+    {
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error =>
+							       "Invalid argument count for function lookup_pdb_by_seq (received $n, expecting 1)");
+    }
+    {
+	my($protein_seqs) = @args;
+
+	my @_bad_arguments;
+        (ref($protein_seqs) eq 'ARRAY') or push(@_bad_arguments, "Invalid type for argument 1 \"protein_seqs\" (value was \"$protein_seqs\")");
+        if (@_bad_arguments) {
+	    my $msg = "Invalid arguments passed to lookup_pdb_by_seq:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	    Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+								   method_name => 'lookup_pdb_by_seq');
+	}
+    }
+
+    my $result = $self->{client}->call($self->{url}, {
+	method => "KBaseProteinStructure.lookup_pdb_by_seq",
+	params => \@args,
+    });
+    if ($result) {
+	if ($result->is_error) {
+	    Bio::KBase::Exceptions::JSONRPC->throw(error => $result->error_message,
+					       code => $result->content->{error}->{code},
+					       method_name => 'lookup_pdb_by_seq',
+					       data => $result->content->{error}->{error} # JSON::RPC::ReturnObject only supports JSONRPC 1.1 or 1.O
+					      );
+	} else {
+	    return wantarray ? @{$result->result} : $result->result->[0];
+	}
+    } else {
+        Bio::KBase::Exceptions::HTTP->throw(error => "Error invoking method lookup_pdb_by_seq",
+					    status_line => $self->{client}->status_line,
+					    method_name => 'lookup_pdb_by_seq',
+				       );
+    }
+}
+
+
+
 sub version {
     my ($self) = @_;
     my $result = $self->{client}->call($self->{url}, {
@@ -287,16 +405,16 @@ sub version {
             Bio::KBase::Exceptions::JSONRPC->throw(
                 error => $result->error_message,
                 code => $result->content->{code},
-                method_name => 'lookup_pdb_by_fid',
+                method_name => 'lookup_pdb_by_seq',
             );
         } else {
             return wantarray ? @{$result->result} : $result->result->[0];
         }
     } else {
         Bio::KBase::Exceptions::HTTP->throw(
-            error => "Error invoking method lookup_pdb_by_fid",
+            error => "Error invoking method lookup_pdb_by_seq",
             status_line => $self->{client}->status_line,
-            method_name => 'lookup_pdb_by_fid',
+            method_name => 'lookup_pdb_by_seq',
         );
     }
 }
@@ -450,6 +568,68 @@ a reference to a list where each element is a feature_id_t
 =begin text
 
 a reference to a list where each element is a feature_id_t
+
+=end text
+
+=back
+
+
+
+=head2 protein_seq_t
+
+=over 4
+
+
+
+=item Description
+
+protein sequence
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 protein_seqs_t
+
+=over 4
+
+
+
+=item Description
+
+list of protein sequences
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a list where each element is a protein_seq_t
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a list where each element is a protein_seq_t
 
 =end text
 
@@ -731,6 +911,32 @@ a reference to a hash where the key is a feature_id_t and the value is a PDBMatc
 =begin text
 
 a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+
+=end text
+
+=back
+
+
+
+=head2 seq_to_pdb_matches
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the key is a protein_seq_t and the value is a PDBMatches
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the key is a protein_seq_t and the value is a PDBMatches
 
 =end text
 

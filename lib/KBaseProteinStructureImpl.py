@@ -13,11 +13,18 @@ This service provides PDB structure ids which correspond to
 KBase protein sequences.  In cases where there is exact match
 to a PDB sequence, close matches (via BLASTP) are reported.
 
-There are two methods or function calls:
+There are three methods or function calls:
   lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers
   lookup_pdb_by_fid - accepts one or more feature ids (or CDS id)
-Both return a table of matches which include PDB id, 1 or 0 for
-exact match, percent identity and alignment length.
+  lookup_pdb_by_seq - accepts one or more protein (aa) sequences
+
+  all return a table of matches which include PDB id, 1 or 0 for
+  exact match, percent identity and alignment length.  
+  lookup_pdb_by_md5 and lookup_pdb_by_seq include the sequence MD5
+  identifier as the first column, lookup_pdb_by_seq includes the
+  feature (CDS) id.  
+  
+  TODO: add option for protein sequence to be included
     '''
 
     ######## WARNING FOR GEVENT USERS #######
@@ -58,6 +65,19 @@ exact match, percent identity and alignment length.
         #At some point might do deeper type checking...
         if not isinstance(results, dict):
             raise ValueError('Method lookup_pdb_by_fid return value ' +
+                             'results is not type dict as required.')
+        # return the results
+        return [results]
+
+    def lookup_pdb_by_seq(self, protein_seqs):
+        # self.ctx is set by the wsgi application class
+        # return variables are: results
+        #BEGIN lookup_pdb_by_seq
+        #END lookup_pdb_by_seq
+
+        #At some point might do deeper type checking...
+        if not isinstance(results, dict):
+            raise ValueError('Method lookup_pdb_by_seq return value ' +
                              'results is not type dict as required.')
         # return the results
         return [results]

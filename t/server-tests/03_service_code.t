@@ -25,7 +25,7 @@ ok( defined( $pss ), "KBaseProteinStructureImpl constructor returned non-null" )
 isa_ok( $pss, "Bio::KBase::KBaseProteinStructure::KBaseProteinStructureImpl", 
               "got a KBaseProteinStructureImpl object" );
 
-can_ok( $pss, ( 'lookup_pdb_by_md5', 'lookup_pdb_by_fid' ) );
+can_ok( $pss, ( 'lookup_pdb_by_md5', 'lookup_pdb_by_fid', 'lookup_pdb_by_seq' ) );
 
 #
 # check the returned data structure for an MD5 lookup
@@ -43,6 +43,8 @@ check_fid_data_struct( $pss );
 check_md5_examples( $pss );
 
 check_fid_examples( $pss );
+
+check_seq_examples( $pss );
 
 done_testing();
 

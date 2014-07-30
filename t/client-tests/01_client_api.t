@@ -38,6 +38,8 @@ check_md5_examples( $psc );
 
 check_fid_examples( $psc );
 
+check_seq_examples( $psc );
+
 done_testing();
 print "$0 ends.\n";
 

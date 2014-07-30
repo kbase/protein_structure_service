@@ -17,6 +17,7 @@
     <ul>
       <li><a href="#lookup_pdb_by_md5">lookup_pdb_by_md5</a></li>
       <li><a href="#lookup_pdb_by_fid">lookup_pdb_by_fid</a></li>
+      <li><a href="#lookup_pdb_by_seq">lookup_pdb_by_seq</a></li>
     </ul>
   </li>
   <li><a href="#TYPES">TYPES</a>
@@ -25,6 +26,8 @@
       <li><a href="#md5_ids_t">md5_ids_t</a></li>
       <li><a href="#feature_id_t">feature_id_t</a></li>
       <li><a href="#feature_ids_t">feature_ids_t</a></li>
+      <li><a href="#protein_seq_t">protein_seq_t</a></li>
+      <li><a href="#protein_seqs_t">protein_seqs_t</a></li>
       <li><a href="#pdb_id_t">pdb_id_t</a></li>
       <li><a href="#chains_t">chains_t</a></li>
       <li><a href="#exact_t">exact_t</a></li>
@@ -34,6 +37,7 @@
       <li><a href="#PDBMatches">PDBMatches</a></li>
       <li><a href="#md5_to_pdb_matches">md5_to_pdb_matches</a></li>
       <li><a href="#fid_to_pdb_matches">fid_to_pdb_matches</a></li>
+      <li><a href="#seq_to_pdb_matches">seq_to_pdb_matches</a></li>
     </ul>
   </li>
 </ul>
@@ -46,7 +50,15 @@
 
 <p>Module KBaseProteinStructure v0.1 This service provides PDB structure ids which correspond to KBase protein sequences. In cases where there is exact match to a PDB sequence, close matches (via BLASTP) are reported.</p>
 
-<p>There are two methods or function calls: lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers lookup_pdb_by_fid - accepts one or more feature ids (or CDS id) Both return a table of matches which include PDB id, 1 or 0 for exact match, percent identity and alignment length.</p>
+<p>There are three methods or function calls: lookup_pdb_by_md5 - accepts one or more MD5 protein identifiers lookup_pdb_by_fid - accepts one or more feature ids (or CDS id) lookup_pdb_by_seq - accepts one or more protein (aa) sequences</p>
+
+<pre><code>  all return a table of matches which include PDB id, 1 or 0 for
+  exact match, percent identity and alignment length.  
+  lookup_pdb_by_md5 and lookup_pdb_by_seq include the sequence MD5
+  identifier as the first column, lookup_pdb_by_seq includes the
+  feature (CDS) id.  
+  
+  TODO: add option for protein sequence to be included</code></pre>
 
 <h2 id="lookup_pdb_by_md5">lookup_pdb_by_md5</h2>
 
@@ -126,13 +138,52 @@ align_length_t is an int</pre>
 </dd>
 </dl>
 
+<h2 id="lookup_pdb_by_seq">lookup_pdb_by_seq</h2>
+
+<pre><code>  $results = $obj-&gt;lookup_pdb_by_seq($protein_seqs)</code></pre>
+
+<dl>
+
+<dt id="Parameter-and-return-types2">Parameter and return types</dt>
+<dd>
+
+
+
+<pre>
+$protein_seqs is a protein_seqs_t
+$results is a seq_to_pdb_matches
+protein_seqs_t is a reference to a list where each element is a protein_seq_t
+protein_seq_t is a string
+seq_to_pdb_matches is a reference to a hash where the key is a protein_seq_t and the value is a PDBMatches
+PDBMatches is a reference to a list where each element is a PDBMatch
+PDBMatch is a reference to a hash where the following keys are defined:
+	pdb_id has a value which is a pdb_id_t
+	chains has a value which is a chains_t
+	exact has a value which is an exact_t
+	percent_id has a value which is a percent_id_t
+	align_length has a value which is an align_length_t
+pdb_id_t is a string
+chains_t is a string
+exact_t is an int
+percent_id_t is a float
+align_length_t is an int</pre>
+
+</dd>
+<dt id="Description2">Description</dt>
+<dd>
+
+<p>of each to a list of PDBMatch records</p>
+
+</dd>
+</dl>
+
 <h1 id="TYPES">TYPES</h1>
 
 <h2 id="md5_id_t">md5_id_t</h2>
 
 <dl>
 
-<dt id="Description2">Description</dt>
+<dt id="Description3">Description</dt>
 <dd>
 
 <p>KBase protein MD5 id</p>
@@ -154,7 +205,7 @@ a string
 
 <dl>
 
-<dt id="Description3">Description</dt>
+<dt id="Description4">Description</dt>
 <dd>
 
 <p>list of protein MD5s</p>
@@ -176,7 +227,7 @@ a reference to a list where each element is a md5_id_t
 
 <dl>
 
-<dt id="Description4">Description</dt>
+<dt id="Description5">Description</dt>
 <dd>
 
 <p>KBase feature id, ala &quot;kb|g.0.peg.781&quot;</p>
@@ -198,7 +249,7 @@ a string
 
 <dl>
 
-<dt id="Description5">Description</dt>
+<dt id="Description6">Description</dt>
 <dd>
 
 <p>list of feature ids</p>
@@ -216,17 +267,61 @@ a reference to a list where each element is a feature_id_t
 </dd>
 </dl>
 
+<h2 id="protein_seq_t">protein_seq_t</h2>
+
+<dl>
+
+<dt id="Description7">Description</dt>
+<dd>
+
+<p>protein sequence</p>
+
+</dd>
+<dt id="Definition4">Definition</dt>
+<dd>
+
+
+
+<pre>
+a string
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="protein_seqs_t">protein_seqs_t</h2>
+
+<dl>
+
+<dt id="Description8">Description</dt>
+<dd>
+
+<p>list of protein sequences</p>
+
+</dd>
+<dt id="Definition5">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a list where each element is a protein_seq_t
+</pre>
+
+</dd>
+</dl>
+
 <h2 id="pdb_id_t">pdb_id_t</h2>
 
 <dl>
 
-<dt id="Description6">Description</dt>
+<dt id="Description9">Description</dt>
 <dd>
 
 <p>PDB id</p>
 
 </dd>
-<dt id="Definition4">Definition</dt>
+<dt id="Definition6">Definition</dt>
 <dd>
 
 
@@ -242,13 +337,13 @@ a string
 
 <dl>
 
-<dt id="Description7">Description</dt>
+<dt id="Description10">Description</dt>
 <dd>
 
 <p>subchains of a match, i.e. &quot;(A,C,D)&quot;</p>
 
 </dd>
-<dt id="Definition5">Definition</dt>
+<dt id="Definition7">Definition</dt>
 <dd>
 
 
@@ -264,13 +359,13 @@ a string
 
 <dl>
 
-<dt id="Description8">Description</dt>
+<dt id="Description11">Description</dt>
 <dd>
 
 <p>1 (true) if exact match to pdb sequence</p>
 
 </dd>
-<dt id="Definition6">Definition</dt>
+<dt id="Definition8">Definition</dt>
 <dd>
 
 
@@ -286,13 +381,13 @@ an int
 
 <dl>
 
-<dt id="Description9">Description</dt>
+<dt id="Description12">Description</dt>
 <dd>
 
 <p>% identity from BLASTP matches</p>
 
 </dd>
-<dt id="Definition7">Definition</dt>
+<dt id="Definition9">Definition</dt>
 <dd>
 
 
@@ -308,13 +403,13 @@ a float
 
 <dl>
 
-<dt id="Description10">Description</dt>
+<dt id="Description13">Description</dt>
 <dd>
 
 <p>BLASTP alignment length</p>
 
 </dd>
-<dt id="Definition8">Definition</dt>
+<dt id="Definition10">Definition</dt>
 <dd>
 
 
@@ -330,13 +425,13 @@ an int
 
 <dl>
 
-<dt id="Description11">Description</dt>
+<dt id="Description14">Description</dt>
 <dd>
 
 <p>returned data from match</p>
 
 </dd>
-<dt id="Definition9">Definition</dt>
+<dt id="Definition11">Definition</dt>
 <dd>
 
 
@@ -356,13 +451,13 @@ align_length has a value which is an align_length_t</pre>
 
 <dl>
 
-<dt id="Description12">Description</dt>
+<dt id="Description15">Description</dt>
 <dd>
 
 <p>list of match records</p>
 
 </dd>
-<dt id="Definition10">Definition</dt>
+<dt id="Definition12">Definition</dt>
 <dd>
 
 
@@ -378,7 +473,7 @@ a reference to a list where each element is a PDBMatch
 
 <dl>
 
-<dt id="Definition11">Definition</dt>
+<dt id="Definition13">Definition</dt>
 <dd>
 
 
@@ -394,13 +489,29 @@ a reference to a hash where the key is a md5_id_t and the value is a PDBMatches
 
 <dl>
 
-<dt id="Definition12">Definition</dt>
+<dt id="Definition14">Definition</dt>
 <dd>
 
 
 
 <pre>
 a reference to a hash where the key is a feature_id_t and the value is a PDBMatches
+</pre>
+
+</dd>
+</dl>
+
+<h2 id="seq_to_pdb_matches">seq_to_pdb_matches</h2>
+
+<dl>
+
+<dt id="Definition15">Definition</dt>
+<dd>
+
+
+
+<pre>
+a reference to a hash where the key is a protein_seq_t and the value is a PDBMatches
 </pre>
 
 </dd>
